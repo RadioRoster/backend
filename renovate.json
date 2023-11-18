@@ -13,5 +13,12 @@
     "baseBranches": ["main"],
     "minimumReleaseAge": "3 days",
     "rollbackPrs": true,
-    "reviewers": ["@lapotor", "@whyauthentic"]
+    "reviewers": ["@lapotor", "@whyauthentic"],
+    "packageRules": [
+        {
+            "description": "Disable major and minor updates for PHP",
+            "matchPackageNames": "php",
+            "rangeStrategy": "auto"
+        }
+    ]
 }
