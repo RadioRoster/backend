@@ -1,0 +1,17 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:best-practices",
+        ":approveMajorUpdates",
+        ":automergeMinor",
+        ":semanticCommits",
+        ":separateMultipleMajorReleases",
+        ":timezone(Europe/Berlin)",
+        ":pinAllExceptPeerDependencies",
+        ":rebaseStalePrs"
+    ],
+    "baseBranches": ["main"],
+    "minimumReleaseAge": "3 days",
+    "rollbackPrs": true,
+    "reviewers": ["@lapotor", "@whyauthentic"]
+}
