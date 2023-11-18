@@ -18,8 +18,7 @@
         {
             "description": "Disable major and minor updates for PHP",
             "matchPackageNames": "php",
-            "matchUpdateTypes": ["major", "minor"],
-            "enabled": false
+            "rangeStrategy": "auto"
         }
     ]
 }
