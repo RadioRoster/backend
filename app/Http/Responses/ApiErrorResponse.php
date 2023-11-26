@@ -31,7 +31,7 @@ class ApiErrorResponse implements Responsable
     {
         $response = ['message' => $this->message];
 
-        if (! is_null($this->exception) && config('app.debug')) {
+        if (!is_null($this->exception) && config('app.debug')) {
             $response['debug'] = [
                 'message'   => $this->exception->getMessage(),
                 'file'      => $this->exception->getFile(),
