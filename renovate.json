@@ -13,6 +13,7 @@
     "baseBranches": ["main"],
     "minimumReleaseAge": "3 days",
     "rollbackPrs": true,
+    "automergeStrategy": "squash",
     "reviewers": ["@lapotor", "@whyauthentic"],
     "packageRules": [
         {
