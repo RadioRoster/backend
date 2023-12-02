@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM composer:lts as build
+FROM composer:lts@sha256:0e7405d851433b5bb61c1783833b65e6b71fdab006c1029f42f2da1d670d53a5 as build
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY . /app/
 RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction --no-progress
 
 # Stage 2: Production
-FROM php:8.1-apache as production
+FROM php:8.1-apache@sha256:3a2ed73364dbeecfdf9432550e294e5b989b182157ab2a56bd9c5a582504f4b6 as production
 
 ENV APP_ENV=production
 ENV APP_DEBUG=false
