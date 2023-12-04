@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Middleware;
 
+use App\Models\User;
 use Tests\TestCase;
 
 class JsonOnlyMiddlewareTest extends TestCase
@@ -11,12 +12,26 @@ class JsonOnlyMiddlewareTest extends TestCase
      */
     public function test_non_json_requests_are_rejected(): void
     {
-        $response = $this->post('/api/v1/login', [], ['Content-Type' => 'application/xml', 'Accept' => 'application/xml']);
+
+        $user = User::factory()->create([
+            'email' => 'valid@example.com',
+            'password' => bcrypt('ValidPassword'),
+        ]);
+
+        $response = $this->post('/api/v1/login', [
+            'body' => '<?xml version="1.0" encoding="UTF-8"?>
+                <root>
+                    <email>valid@example.com</email>
+                    <password>ValidPassword</password>
+                </root>'
+        ], ['Content-Type' => 'text/xml']);
 
         $response->assertStatus(400)
             ->assertJson([
                 'message' => 'Only JSON requests are accepted'
             ]);
+
+        $user->delete();
     }
 
     /**
@@ -24,8 +39,18 @@ class JsonOnlyMiddlewareTest extends TestCase
      */
     public function test_json_requests_are_accepted(): void
     {
-        $response = $this->post('/api/v1/login', [], ['Content-Type' => 'application/json', 'Accept' => 'application/json']);
+        $user = User::factory()->create([
+            'email' => 'valid@example.com',
+            'password' => bcrypt('ValidPassword'),
+        ]);
 
-        $response->assertStatus(302);
+        $response = $this->postJson('/api/v1/login', [
+            'email' => 'valid@example.com',
+            'password' => 'ValidPassword',
+        ], ['Content-Type' => 'application/json', 'Accept' => 'application/json']);
+
+        $response->assertStatus(200);
+
+        $user->delete();
     }
 }
