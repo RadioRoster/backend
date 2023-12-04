@@ -11,7 +11,7 @@ class JsonOnlyMiddlewareTest extends TestCase
      */
     public function test_non_json_requests_are_rejected(): void
     {
-        $response = $this->post('/', [], ['Accept' => 'application/xml']);
+        $response = $this->post('/api/v1/login', [], ['Content-Type' => 'application/xml', 'Accept' => 'application/xml']);
 
         $response->assertStatus(400)
             ->assertJson([
@@ -24,8 +24,8 @@ class JsonOnlyMiddlewareTest extends TestCase
      */
     public function test_json_requests_are_accepted(): void
     {
-        $response = $this->post('/', [], ['Accept' => 'application/json']);
+        $response = $this->post('/api/v1/login', [], ['Content-Type' => 'application/json', 'Accept' => 'application/json']);
 
-        $response->assertStatus(200);
+        $response->assertStatus(302);
     }
 }
