@@ -44,6 +44,8 @@ class AuthControllerTest extends TestCase
             ]);
 
         $this->assertAuthenticatedAs($user);
+
+        $user->delete();
     }
 
     /**
