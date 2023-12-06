@@ -16,7 +16,7 @@ class ApiSuccessResponse implements Responsable
     public function __construct(
         private $data,
         private int $status = Response::HTTP_OK,
-        private array $headers = []
+        private array $headers = ["Content-Type" => "application/json", "Accept" => "application/json"]
     ) {}
 
     /**

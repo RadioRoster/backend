@@ -18,7 +18,7 @@ class ApiErrorResponse implements Responsable
         private $message,
         private ?Throwable $exception = null,
         private int $status = Response::HTTP_INTERNAL_SERVER_ERROR,
-        private array $headers = []
+        private array $headers = ["Content-Type" => "application/json", "Accept" => "application/json"]
     ) {}
 
     /**
