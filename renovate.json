@@ -17,9 +17,21 @@
     "reviewers": ["@lapotor", "@whyauthentic"],
     "packageRules": [
         {
-            "description": "Disable major and minor updates for PHP",
+            "description": "Allow ranges for PHP",
             "matchPackageNames": "php",
             "rangeStrategy": "auto"
+        },
+        {
+            "description": "Require approval for minor updates on PHP",
+            "matchPackageNames": "php",
+            "matchUpdateTypes": ["minor"],
+            "dependencyDashboardApproval": true
+        },
+        {
+            "description": "Disallow major updates for PHP",
+            "matchPackageNames": "php",
+            "matchUpdateTypes": ["major"],
+            "enabled": false
         }
     ]
 }
