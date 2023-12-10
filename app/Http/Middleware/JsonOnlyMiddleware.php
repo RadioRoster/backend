@@ -15,6 +15,11 @@ class JsonOnlyMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Empty body requests are allowed
+        if ($request->getContent() === '') {
+            return $next($request);
+        }
+
         if (!$request->isJson()) {
             return response()->json([
                 'message' => 'Only JSON requests are accepted'
