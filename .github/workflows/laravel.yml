@@ -11,8 +11,8 @@ jobs:
     name: Laravel (PHP ${{ matrix.php-versions }}) Tests
     runs-on: ubuntu-latest
     env:
-      DB_DATABASE: laravel
-      DB_USERNAME: root
+      DB_DATABASE: radioroster
+      DB_USERNAME: radioroster
       DB_PASSWORD: testPassword
       APP_ENV: testing
 
