@@ -1,4 +1,4 @@
-name: Laravel Test
+name: Laravel Application Tests
 
 on:
   workflow_call:
