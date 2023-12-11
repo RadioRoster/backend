@@ -32,7 +32,7 @@ jobs:
         mariadb-versions: ["10", "11"]
 
     steps:
-      - uses: ./.github/actions/laravel-test.yml
+      - uses: ./.github/workflows/laravel-test.yml
         with:
           db-type: mysql
           db-port: ${{ job.services.mariadb.ports[3306] }}
@@ -59,7 +59,7 @@ jobs:
         psql-versions: ["14", "15", "16"]
 
     steps:
-      - uses: ./.github/actions/laravel-test.yml
+      - uses: ./.github/workflows/laravel-test.yml
         with:
           db-type: pgsql
           db-port: ${{ job.services.postgres.ports[5432] }}
