@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Responses\ApiSuccessResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -34,5 +36,22 @@ class AuthController extends Controller
             'user' => $user,
             'access_token' => $token
         ], Response::HTTP_OK);
+    }
+
+    /**
+     * Logout the user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \App\Http\Responses\ApiSuccessResponse
+     */
+    public function logout(Request $request)
+    {
+        if (!$request->user()) {
+            return new ApiSuccessResponse('No user found');
+        }
+
+        $request->user()->currentAccessToken()->delete();
+
+        return new ApiSuccessResponse('User logged out successfully');
     }
 }
