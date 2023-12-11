@@ -72,7 +72,9 @@ jobs:
         run: php artisan config:clear
 
       - name: Run Migrations
-        run: php artisan migrate -v
+        run: |
+          echo $DB_PORT
+          php artisan migrate -v
         env:
           DB_PORT: ${{ inputs.db-type == 'mysql' && '3306' || inputs.db-type == 'pgsql' && '5432' }}
 
