@@ -8,9 +8,10 @@ on:
 
 jobs:
   laravel-tests:
-    name: Laravel (PHP ${{ matrix.php-versions }}) Tests
+    name: Laravel (PHP ${{ matrix.php-versions }}) with ${{ matrix.db }} ${{ matrix.mariadb-versions }}
     runs-on: ubuntu-latest
     env:
+      DB_CONNECTION: ${{ matrix.db }}
       DB_DATABASE: radioroster
       DB_USERNAME: radioroster
       DB_PASSWORD: testPassword
@@ -18,20 +19,38 @@ jobs:
 
     services:
       mariadb:
-        image: mariadb:lts
+        image: mariadb:${{ matrix.mariadb-versions }}
         env:
           MYSQL_ROOT_PASSWORD: rootPassword
           MYSQL_DATABASE: radioroster
           MYSQL_USER: radioroster
           MYSQL_PASSWORD: testPassword
         ports:
-          - 3306:3306
+          - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      postgres:
+        image: postgres:${{ matrix.postgres-versions }}
+        env:
+          POSTGRES_DB: radioroster
+          POSTGRES_USER: radioroster
+          POSTGRES_PASSWORD: testPassword
+        ports:
+          - 5432
+        options: --health-cmd="pg_isready -U postgres || exit 1" --health-interval=10s --health-timeout=5s --health-retries=3
 
     strategy:
       fail-fast: false
       matrix:
+        db: [mysql, pgsql]
         php-versions: ["8.1", "8.2", "8.3"]
+        mariadb-versions: ["10", "11"]
+        postgres-versions: ["14", "15", "16"]
+        include:
+          - php-versions: ["8.1", "8.2", "8.3"]
+          - db: mysql
+            mariadb-versions: ["10", "11"]
+          - db: pgsql
+            postgres-versions: ["14", "15", "16"]
 
     steps:
       - name: Checkout
@@ -69,7 +88,9 @@ jobs:
       - name: Run Migrations
         run: php artisan migrate -v
         env:
+          if: matrix.db == 'mysql'
           DB_PORT: ${{ job.services.mariadb.ports['3306'] }}
+          else: ${{ job.services.postgres.ports['5432'] }}
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         run: vendor/bin/phpunit --coverage-text
