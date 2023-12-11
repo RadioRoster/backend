@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DB_CONNECTION: ${{ inputs.db-type }}
+      DB_PORT: ${{ inputs.db-type == 'mysql' && '3306' || inputs.db-type == 'pgsql' && '5432' }}
       DB_USERNAME: radioroster
       DB_PASSWORD: testPassword
       DB_DATABASE: radioroster
@@ -72,11 +73,7 @@ jobs:
         run: php artisan config:clear
 
       - name: Run Migrations
-        run: |
-          echo $DB_PORT
-          php artisan migrate -v
-        env:
-          DB_PORT: ${{ inputs.db-type == 'mysql' && '3306' || inputs.db-type == 'pgsql' && '5432' }}
+        run: php artisan migrate -v
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         run: vendor/bin/phpunit --coverage-text
