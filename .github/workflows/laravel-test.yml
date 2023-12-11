@@ -29,12 +29,12 @@ jobs:
         php-versions: ["8.1", "8.2", "8.3"]
 
     steps:
-      - if: ${{ github.event.inputs.db-type == 'mysql' }}
+      - if: ${{ inputs.db-type == 'mysql' }}
         name: Setup MariaDB ${{ inputs.db-version }}
         run: |
           docker run -d --name mariadb -e MARIADB_RANDOM_ROOT_PASSWORD=true -e MARIADB_DATABASE=${{ env.DB_DATABASE }} -e MARIADB_USER=${{ env.DB_USERNAME }} -e MARIADB_PASSWORD=${{ env.DB_PASSWORD }} --publish 3306:3306 mariadb:${{ inputs.db-version }}
 
-      - if: ${{ github.event.inputs.db-type == 'psql' }}
+      - if: ${{ inputs.db-type == 'psql' }}
         name: Setup PostgreSQL ${{ inputs.db-version }}
         run: |
           docker run -d --name postgres -e POSTGRES_DB=${{ env.DB_DATABASE }} -e POSTGRES_USER=${{ env.DB_USERNAME }} -e POSTGRES_PASSWORD=${{ env.DB_PASSWORD }} --publish 5432:5432 postgres:${{ inputs.db-version }}
@@ -74,7 +74,7 @@ jobs:
       - name: Run Migrations
         run: php artisan migrate -v
         env:
-          DB_PORT: ${{ github.event.inputs.db-type == 'mysql' && 3306 || github.event.inputs.db-type == 'psql' && 5432 }}
+          DB_PORT: ${{ inputs.db-type == 'mysql' && 3306 || inputs.db-type == 'psql' && 5432 }}
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         run: vendor/bin/phpunit --coverage-text
