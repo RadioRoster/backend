@@ -46,11 +46,16 @@ jobs:
         mariadb-versions: ["10", "11"]
         postgres-versions: ["14", "15", "16"]
         include:
-          - php-versions: ["8.1", "8.2", "8.3"]
           - db: mysql
-            mariadb-versions: ["10", "11"]
+            mariadb-versions: "10"
+          - db: mysql
+            mariadb-versions: "11"
           - db: pgsql
-            postgres-versions: ["14", "15", "16"]
+            postgres-versions: "14"
+          - db: pgsql
+            postgres-versions: "15"
+          - db: pgsql
+            postgres-versions: "16"
 
     steps:
       - name: Checkout
