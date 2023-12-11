@@ -15,7 +15,7 @@ class JsonOnlyMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->isJson()) {
+        if (!empty($request->all()) && !$request->isJson()) {
             return response()->json([
                 'message' => 'Only JSON requests are accepted'
             ], Response::HTTP_BAD_REQUEST);
