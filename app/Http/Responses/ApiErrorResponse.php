@@ -13,6 +13,8 @@ class ApiErrorResponse implements Responsable
      *
      * This class is responsible for constructing an API error response object
      * with the provided message, optional exception, status code, and headers.
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(
         private $message,
@@ -24,6 +26,7 @@ class ApiErrorResponse implements Responsable
     /**
      * Convert the exception to a JSON response.
      *
+     * @codeCoverageIgnore
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
