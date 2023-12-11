@@ -1,0 +1,79 @@
+name: Laravel Application Tests
+
+on:
+  workflow_call:
+    inputs:
+      db-type:
+        description: "Database type"
+        required: true
+        type: string
+      db-version:
+        description: "Database version"
+        required: true
+        type: string
+
+jobs:
+  laravel-test:
+    name: Laravel (PHP ${{ matrix.php-versions }}) - ${{ inputs.db-type }} ${{ inputs.db-version }}
+    runs-on: ubuntu-latest
+    env:
+      DB_CONNECTION: ${{ inputs.db-type }}
+      DB_PORT: ${{ inputs.db-type == 'mysql' && '3306' || inputs.db-type == 'pgsql' && '5432' }}
+      DB_USERNAME: radioroster
+      DB_PASSWORD: testPassword
+      DB_DATABASE: radioroster
+      APP_ENV: testing
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ["8.1", "8.2", "8.3"]
+
+    steps:
+      - if: ${{ inputs.db-type == 'mysql' }}
+        name: Setup MariaDB ${{ inputs.db-version }}
+        run: |
+          docker run -d --name mariadb -e MARIADB_RANDOM_ROOT_PASSWORD=true -e MARIADB_DATABASE=${{ env.DB_DATABASE }} -e MARIADB_USER=${{ env.DB_USERNAME }} -e MARIADB_PASSWORD=${{ env.DB_PASSWORD }} --publish 3306:3306 mariadb:${{ inputs.db-version }}
+
+      - if: ${{ inputs.db-type == 'pgsql' }}
+        name: Setup PostgreSQL ${{ inputs.db-version }}
+        run: |
+          docker run -d --name postgres -e POSTGRES_DB=${{ env.DB_DATABASE }} -e POSTGRES_USER=${{ env.DB_USERNAME }} -e POSTGRES_PASSWORD=${{ env.DB_PASSWORD }} --publish 5432:5432 postgres:${{ inputs.db-version }}
+
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Setup PHP ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@e8cd65f444039503a75cf4057d55442fc4316f78
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: pcntl, zip, intl, exif, mbstring, dom, fileinfo, ${{ inputs.db-type == 'mysql' && 'pdo_mysql' || inputs.db-type == 'pgsql' && 'pdo_pgsql' }}
+          coverage: xdebug
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer Dependencies
+        run: composer install -q --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Prepare Laravel Application
+        run: |
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+          php artisan key:generate
+
+      - name: Clear config
+        run: php artisan config:clear
+
+      - name: Run Migrations
+        run: php artisan migrate -v
+
+      - name: Execute tests (Unit and Feature tests) via PHPUnit
+        run: vendor/bin/phpunit --coverage-text
