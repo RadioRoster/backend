@@ -34,7 +34,7 @@ jobs:
         run: |
           docker run -d --name mariadb -e MARIADB_RANDOM_ROOT_PASSWORD=true -e MARIADB_DATABASE=${{ env.DB_DATABASE }} -e MARIADB_USER=${{ env.DB_USERNAME }} -e MARIADB_PASSWORD=${{ env.DB_PASSWORD }} --publish 3306:3306 mariadb:${{ inputs.db-version }}
 
-      - if: ${{ inputs.db-type == 'psql' }}
+      - if: ${{ inputs.db-type == 'pgsql' }}
         name: Setup PostgreSQL ${{ inputs.db-version }}
         run: |
           docker run -d --name postgres -e POSTGRES_DB=${{ env.DB_DATABASE }} -e POSTGRES_USER=${{ env.DB_USERNAME }} -e POSTGRES_PASSWORD=${{ env.DB_PASSWORD }} --publish 5432:5432 postgres:${{ inputs.db-version }}
