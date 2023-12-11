@@ -1,0 +1,82 @@
+name: Laravel Test
+
+on:
+  workflow_call:
+    inputs:
+      db-type:
+        description: "Database type"
+        required: true
+        type: string
+      db-port:
+        description: "Database port"
+        required: true
+        type: string
+      db-user:
+        description: "Database user"
+        required: true
+        type: string
+      db-password:
+        description: "Database password"
+        required: true
+        type: string
+      db-database:
+        description: "Database name"
+        required: true
+        type: string
+
+jobs:
+  laravel-test:
+    name: Laravel (PHP ${{ matrix.php-versions }})
+    runs-on: ubuntu-latest
+    env:
+      DB_CONNECTION: ${{ inputs.db-type }}
+      DB_USERNAME: ${{ inputs.db-user }}
+      DB_PASSWORD: ${{ inputs.db-password }}
+      DB_DATABASE: ${{ inputs.db-database }}
+      APP_ENV: testing
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ["8.1", "8.2", "8.3"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Setup PHP ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@e8cd65f444039503a75cf4057d55442fc4316f78
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: sqlite, pdo_sqlite, pcntl, zip, intl, exif, mbstring, dom, fileinfo, mysql
+          coverage: xdebug
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer Dependencies
+        run: composer install -q --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Prepare Laravel Application
+        run: |
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+          php artisan key:generate
+
+      - name: Clear config
+        run: php artisan config:clear
+
+      - name: Run Migrations
+        run: php artisan migrate -v
+        env:
+          DB_PORT: ${{ inputs.db-port }}
+
+      - name: Execute tests (Unit and Feature tests) via PHPUnit
+        run: vendor/bin/phpunit --coverage-text

@@ -1,101 +1,68 @@
-name: Laravel
+name: Laravel Test
 
 on:
   push:
-    branches: ["main"]
+    branches: [main]
   pull_request:
-    branches: ["main"]
+    branches: [main]
+
+env:
+  DB_DATABASE: radioroster
+  DB_USERNAME: radioroster
+  DB_PASSWORD: testPassword
 
 jobs:
-  laravel-tests:
-    name: Laravel (PHP ${{ matrix.php-versions }}) with ${{ matrix.db }} ${{ matrix.mariadb-versions }}
+  laravel-mariadb:
+    name: Laravel with MariaDB ${{ matrix.mariadb-versions }}
     runs-on: ubuntu-latest
-    env:
-      DB_CONNECTION: ${{ matrix.db }}
-      DB_DATABASE: radioroster
-      DB_USERNAME: radioroster
-      DB_PASSWORD: testPassword
-      APP_ENV: testing
-
     services:
       mariadb:
         image: mariadb:${{ matrix.mariadb-versions }}
         env:
-          MYSQL_ROOT_PASSWORD: rootPassword
-          MYSQL_DATABASE: radioroster
-          MYSQL_USER: radioroster
-          MYSQL_PASSWORD: testPassword
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: ${{ env.DB_DATABASE }}
+          MYSQL_USER: ${{ env.DB_USERNAME }}
+          MYSQL_PASSWORD: ${{ env.DB_PASSWORD }}
         ports:
           - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-      postgres:
-        image: postgres:${{ matrix.postgres-versions }}
-        env:
-          POSTGRES_DB: radioroster
-          POSTGRES_USER: radioroster
-          POSTGRES_PASSWORD: testPassword
-        ports:
-          - 5432
-        options: --health-cmd="pg_isready -U postgres || exit 1" --health-interval=10s --health-timeout=5s --health-retries=3
 
     strategy:
-      fail-fast: false
       matrix:
-        db: [mysql, pgsql]
-        php-versions: ["8.1", "8.2", "8.3"]
         mariadb-versions: ["10", "11"]
-        postgres-versions: ["14", "15", "16"]
-        include:
-          - db: mysql
-            mariadb-versions: "10"
-          - db: mysql
-            mariadb-versions: "11"
-          - db: pgsql
-            postgres-versions: "14"
-          - db: pgsql
-            postgres-versions: "15"
-          - db: pgsql
-            postgres-versions: "16"
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
-
-      - name: Setup PHP ${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@e8cd65f444039503a75cf4057d55442fc4316f78
+      - uses: ./.github/actions/laravel-test.yml
         with:
-          php-version: ${{ matrix.php-versions }}
-          extensions: sqlite, pdo_sqlite, pcntl, zip, intl, exif, mbstring, dom, fileinfo, mysql
-          coverage: xdebug
+          db-type: mysql
+          db-port: ${{ job.services.mariadb.ports[3306] }}
+          db-user: ${{ env.DB_USERNAME }}
+          db-password: ${{ env.DB_PASSWORD }}
+          db-database: ${{ env.DB_DATABASE }}
 
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache Composer Dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Composer Dependencies
-        run: composer install -q --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
-
-      - name: Prepare Laravel Application
-        run: |
-          php -r "file_exists('.env') || copy('.env.example', '.env');"
-          php artisan key:generate
-
-      - name: Clear config
-        run: php artisan config:clear
-
-      - name: Run Migrations
-        run: php artisan migrate -v
+  laravel-psql:
+    name: Laravel with PostgreSQL ${{ matrix.psql-versions }}
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:${{ matrix.psql-versions }}
         env:
-          if: matrix.db == 'mysql'
-          DB_PORT: ${{ job.services.mariadb.ports['3306'] }}
-          else: ${{ job.services.postgres.ports['5432'] }}
+          POSTGRES_USER: ${{ env.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+          POSTGRES_DB: ${{ env.DB_DATABASE }}
+        ports:
+          - 5432
+        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
 
-      - name: Execute tests (Unit and Feature tests) via PHPUnit
-        run: vendor/bin/phpunit --coverage-text
+    strategy:
+      matrix:
+        psql-versions: ["14", "15", "16"]
+
+    steps:
+      - uses: ./.github/actions/laravel-test.yml
+        with:
+          db-type: pgsql
+          db-port: ${{ job.services.postgres.ports[5432] }}
+          db-user: ${{ env.DB_USERNAME }}
+          db-password: ${{ env.DB_PASSWORD }}
+          db-database: ${{ env.DB_DATABASE }}
