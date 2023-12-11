@@ -14,7 +14,7 @@ on:
 
 jobs:
   laravel-test:
-    name: Laravel (PHP ${{ matrix.php-versions }}) with ${{ inputs.db-type }} ${{ inputs.db-version }}
+    name: Laravel (PHP ${{ matrix.php-versions }}) - ${{ inputs.db-type }} ${{ inputs.db-version }}
     runs-on: ubuntu-latest
     env:
       DB_CONNECTION: ${{ inputs.db-type }}
