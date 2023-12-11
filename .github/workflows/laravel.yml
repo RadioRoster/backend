@@ -14,55 +14,22 @@ env:
 jobs:
   laravel-mariadb:
     name: Laravel with MariaDB ${{ matrix.mariadb-versions }}
-    runs-on: ubuntu-latest
-    services:
-      mariadb:
-        image: mariadb:${{ matrix.mariadb-versions }}
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: ${{ env.DB_DATABASE }}
-          MYSQL_USER: ${{ env.DB_USERNAME }}
-          MYSQL_PASSWORD: ${{ env.DB_PASSWORD }}
-        ports:
-          - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    uses: ./.github/workflows/laravel-test.yml
+    with:
+      db-type: mysql
+      db-version: ${{ matrix.mariadb-versions }}
 
     strategy:
       matrix:
         mariadb-versions: ["10", "11"]
 
-    steps:
-      - uses: ./.github/workflows/laravel-test.yml
-        with:
-          db-type: mysql
-          db-port: ${{ job.services.mariadb.ports[3306] }}
-          db-user: ${{ env.DB_USERNAME }}
-          db-password: ${{ env.DB_PASSWORD }}
-          db-database: ${{ env.DB_DATABASE }}
-
   laravel-psql:
     name: Laravel with PostgreSQL ${{ matrix.psql-versions }}
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:${{ matrix.psql-versions }}
-        env:
-          POSTGRES_USER: ${{ env.DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
-          POSTGRES_DB: ${{ env.DB_DATABASE }}
-        ports:
-          - 5432
-        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
+    uses: ./.github/workflows/laravel-test.yml
+    with:
+      db-type: psql
+      db-version: ${{ matrix.psql-versions }}
 
     strategy:
       matrix:
         psql-versions: ["14", "15", "16"]
-
-    steps:
-      - uses: ./.github/workflows/laravel-test.yml
-        with:
-          db-type: pgsql
-          db-port: ${{ job.services.postgres.ports[5432] }}
-          db-user: ${{ env.DB_USERNAME }}
-          db-password: ${{ env.DB_PASSWORD }}
-          db-database: ${{ env.DB_DATABASE }}
