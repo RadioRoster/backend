@@ -24,12 +24,12 @@ jobs:
         mariadb-versions: ["10", "11"]
 
   laravel-psql:
-    name: Laravel with PostgreSQL ${{ matrix.psql-versions }}
+    name: Laravel with PostgreSQL ${{ matrix.pgsql-versions }}
     uses: ./.github/workflows/laravel-test.yml
     with:
-      db-type: psql
-      db-version: ${{ matrix.psql-versions }}
+      db-type: pgsql
+      db-version: ${{ matrix.pgsql-versions }}
 
     strategy:
       matrix:
-        psql-versions: ["14", "15", "16"]
+        pgsql-versions: ["14", "15", "16"]
