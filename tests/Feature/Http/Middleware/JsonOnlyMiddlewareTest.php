@@ -53,4 +53,23 @@ class JsonOnlyMiddlewareTest extends TestCase
 
         $user->delete();
     }
+
+    /**
+     * Test that empty requests are accepted.
+     */
+    public function test_empty_requests_are_accepted(): void
+    {
+
+        $response = $this->post(uri: '/api/v1/login', headers: ['Accept' => 'application/json']);
+
+        $response->assertStatus(422)
+            ->assertJson([
+                'message' => 'The email field is required. (and 1 more error)',
+                'errors' => [
+                    'email' => ['The email field is required.'],
+                    'password' => ['The password field is required.']
+                ]
+            ]);
+
+    }
 }
