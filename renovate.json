@@ -8,7 +8,8 @@
         ":separateMultipleMajorReleases",
         ":timezone(Europe/Berlin)",
         ":pinAllExceptPeerDependencies",
-        ":rebaseStalePrs"
+        ":rebaseStalePrs",
+        ":label(Scope: Deps)"
     ],
     "baseBranches": ["main"],
     "minimumReleaseAge": "3 days",
