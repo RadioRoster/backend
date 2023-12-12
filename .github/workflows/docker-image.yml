@@ -6,6 +6,9 @@ on:
       - main
   release:
     types: [published]
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 env:
@@ -14,7 +17,12 @@ env:
 
 jobs:
   build-and-push-image:
+    name: Build and push Docker image for PHP ${{ matrix.php-version }}
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: ["8.1", "8.2", "8.3"]
 
     permissions:
       contents: read
@@ -37,10 +45,10 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,format=long
+            type=ref,event=branch,suffix=-php${{ matrix.php-version }}
+            type=semver,pattern={{version}},suffix=-php${{ matrix.php-version }}
+            type=semver,pattern={{major}}.{{minor}},suffix=-php${{ matrix.php-version }}
+            type=sha,format=long,suffix=-php${{ matrix.php-version }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@4a13e500e55cf31b7a5d59a38ab2040ab0f42f56 # v5
@@ -49,3 +57,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            PHP_VERSION=${{ matrix.php-version }}
