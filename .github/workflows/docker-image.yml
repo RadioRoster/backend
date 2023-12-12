@@ -58,4 +58,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            PHP_VERSION=${{ matrix.php-version }}
+            PHP_VERSION=${{ matrix.php-version }}-apache
