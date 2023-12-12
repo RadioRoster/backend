@@ -9,7 +9,7 @@ COPY . /app/
 RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction --no-progress
 
 # Stage 2: Production
-FROM php:8.1-apache@sha256:3a2ed73364dbeecfdf9432550e294e5b989b182157ab2a56bd9c5a582504f4b6 as production
+FROM php:8.3-apache@sha256:c55d99c94f804ee54177ba00961d2441333b277a67e6a6901341cb251b47f638 as production
 
 ENV APP_ENV=production
 ENV APP_DEBUG=false
