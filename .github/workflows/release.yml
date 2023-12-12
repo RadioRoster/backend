@@ -1,0 +1,35 @@
+name: Upload Release assets to GitHub
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  mariadb-assets:
+    name: Upload MariaDB assets
+
+    strategy:
+      matrix:
+        mariadb-versions: ["10", "11"]
+
+    uses: ./.github/workflows/upload-db-assets.yml
+    with:
+      db-type: mysql
+      db-version: ${{ matrix.mariadb-versions }}
+
+  postgres-assets:
+    name: Upload PostgreSQL assets
+
+    strategy:
+      matrix:
+        pgsql-versions: ["14", "15", "16"]
+
+    uses: ./.github/workflows/upload-db-assets.yml
+    with:
+      db-type: pgsql
+      db-version: ${{ matrix.pgsql-versions }}
+
+  bundle-assets:
+    name: Upload bundle assets
+    uses: ./.github/workflows/upload-file-assets.yml

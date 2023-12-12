@@ -1,0 +1,81 @@
+name: Publish Release db dump assets
+
+on:
+  workflow_call:
+    inputs:
+      db-type:
+        description: "Database type"
+        required: true
+        type: string
+      db-version:
+        description: "Database version"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  DB_CONNECTION: ${{ inputs.db-type }}
+  DB_PORT: ${{ inputs.db-type == 'mysql' && '3306' || inputs.db-type == 'pgsql' && '5432' }}
+  DB_USERNAME: radioroster
+  DB_PASSWORD: releasePassword
+  DB_DATABASE: radioroster
+  APP_ENV: production
+  APP_DEBUG: false
+
+jobs:
+  mariadb-release-dump:
+    name: Add ${{ inputs.db-type == 'mysql' && 'MariaDB' || inputs.db-type == 'pgsql' && 'PostgreSQL' }} ${{ inputs.db-version }} dump to release
+    runs-on: ubuntu-latest
+
+    steps:
+      - if: ${{ inputs.db-type == 'mysql' }}
+        name: Setup MariaDB ${{ inputs.db-version }}
+        run: |
+          docker run -d --name mariadb -e MARIADB_RANDOM_ROOT_PASSWORD=true -e MARIADB_DATABASE=${{ env.DB_DATABASE }} -e MARIADB_USER=${{ env.DB_USERNAME }} -e MARIADB_PASSWORD=${{ env.DB_PASSWORD }} --publish 3306:3306 mariadb:${{ inputs.db-version }}
+
+      - if: ${{ inputs.db-type == 'pgsql' }}
+        name: Setup PostgreSQL ${{ inputs.db-version }}
+        run: |
+          docker run -d --name postgres -e POSTGRES_DB=${{ env.DB_DATABASE }} -e POSTGRES_USER=${{ env.DB_USERNAME }} -e POSTGRES_PASSWORD=${{ env.DB_PASSWORD }} --publish 5432:5432 postgres:${{ inputs.db-version }}
+
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Setup PHP 8.1
+        uses: shivammathur/setup-php@e8cd65f444039503a75cf4057d55442fc4316f78
+        with:
+          php-version: "8.1"
+          extensions: pcntl, zip, intl, exif, mbstring, dom, fileinfo, ${{ inputs.db-type == 'mysql' && 'pdo_mysql' || inputs.db-type == 'pgsql' && 'pdo_pgsql' }}
+
+      - name: Install Composer Dependencies
+        run: composer install -q --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Prepare Laravel Application
+        run: |
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+          php artisan key:generate
+
+      - name: Clear config
+        run: php artisan config:clear
+
+      - name: Run Migrations
+        run: php artisan migrate --force
+
+      - if: ${{ inputs.db-type == 'mysql' }}
+        name: Dump MariaDB ${{ inputs.db-type == 'mysql' && inputs.db-version }} database
+        run: |
+          mkdir -p database/dumps
+          docker exec mariadb mysqldump --user $DB_USERNAME --password=$DB_PASSWORD $DB_DATABASE | gzip > database/dumps/radioroster_${{ github.ref_name }}-mariadb${{ inputs.db-version }}.sql.gz
+
+      - if: ${{ inputs.db-type == 'pgsql' }}
+        name: Dump PostgreSQL ${{ inputs.db-type == 'pgsql' && inputs.db-version }} database
+        run: |
+          mkdir -p database/dumps
+          docker exec postgres sh -c 'export PGPASSWORD=${{ env.DB_PASSWORD }} && pg_dump -Fc -Z 6 -U${{ env.DB_USERNAME }} $DB_DATABASE' > database/dumps/radioroster_${{ github.ref_name }}-postgres${{ inputs.db-version }}.sql.gz
+
+      - name: Upload database dump
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          files: database/dumps/radioroster_${{ github.ref_name }}${{ inputs.db-type == 'mysql' && '-mariadb' || inputs.db-type == 'pgsql' && '-postgres' }}${{ inputs.db-version }}.sql.gz
