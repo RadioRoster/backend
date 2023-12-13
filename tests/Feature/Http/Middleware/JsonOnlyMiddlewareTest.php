@@ -18,13 +18,19 @@ class JsonOnlyMiddlewareTest extends TestCase
             'password' => bcrypt('ValidPassword'),
         ]);
 
-        $response = $this->post('/api/v1/login', [
-            'body' => '<?xml version="1.0" encoding="UTF-8"?>
+        $response = $this->call(
+            'POST',
+            '/api/v1/login',
+            server: $this->transformHeadersToServerVars([
+                'Accept' => ['text/xml', 'application/xml', 'text/plain'],
+                'Content-Type' => ['text/xml', 'application/xml', 'text/plain'],
+            ]),
+            content: '<?xml version="1.0" encoding="UTF-8"?>
                 <root>
                     <email>valid@example.com</email>
                     <password>ValidPassword</password>
                 </root>'
-        ], ['Content-Type' => 'text/xml']);
+        );
 
         $response->assertStatus(400)
             ->assertJson([
