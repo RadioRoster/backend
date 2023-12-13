@@ -105,16 +105,19 @@ class UserControllerTest extends TestCase
             'email' => 'updated.email@example.com',
         ];
 
-        $newUserData = array_merge($user->toArray(), $userData);
-
         // Send a PATCH request to the update endpoint
         $response = $this->put('/api/v1/users/' . $user->id, $userData);
 
         // Assert that the response has a successful status code
         $response->assertStatus(200);
 
+        $this->assertDatabaseHas('users', [
+            'name' => $userData['name'],
+            'email' => $userData['email'],
+        ]);
+
         // Assert that the response contains the updated user data
-        $response->assertJsonFragment($newUserData);
+        $response->assertJsonFragment($userData);
     }
 
     /**
