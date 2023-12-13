@@ -1,0 +1,41 @@
+name: Upload bundle file as assets
+
+on:
+  workflow_call:
+
+permissions:
+  contents: write
+
+env:
+  APP_ENV: production
+  APP_DEBUG: false
+
+jobs:
+  build-assets:
+    name: Build assets with PHP ${{ matrix.php-versions }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-versions: ["8.1", "8.2", "8.3"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Setup PHP ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@e8cd65f444039503a75cf4057d55442fc4316f78
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: pcntl, zip, intl, exif, mbstring, dom, fileinfo
+
+      - name: Install Composer Dependencies
+        run: composer install -q --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Compress into Zip file
+        run: zip -r -q -9 -X radioroster_${{ github.ref_name }}-php${{ matrix.php-versions }}.zip .
+
+      - name: Upload zip file as asset
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          files: radioroster_${{ github.ref_name }}-php${{ matrix.php-versions }}.zip
