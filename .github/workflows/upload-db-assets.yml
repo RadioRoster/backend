@@ -1,4 +1,4 @@
-name: Laravel Application Tests
+name: Publish Release db dump assets
 
 on:
   workflow_call:
@@ -12,23 +12,22 @@ on:
         required: true
         type: string
 
-jobs:
-  laravel-test:
-    name: Laravel (PHP ${{ matrix.php-versions }}) - ${{ inputs.db-type }} ${{ inputs.db-version }}
-    runs-on: ubuntu-latest
-    env:
-      DB_CONNECTION: ${{ inputs.db-type }}
-      DB_PORT: ${{ inputs.db-type == 'mysql' && '3306' || inputs.db-type == 'pgsql' && '5432' }}
-      DB_USERNAME: radioroster
-      DB_PASSWORD: testPassword
-      DB_DATABASE: radioroster
-      APP_ENV: testing
+permissions:
+  contents: write
 
-    strategy:
-      fail-fast: false
-      max-parallel: 3
-      matrix:
-        php-versions: ["8.1", "8.2", "8.3"]
+env:
+  DB_CONNECTION: ${{ inputs.db-type }}
+  DB_PORT: ${{ inputs.db-type == 'mysql' && '3306' || inputs.db-type == 'pgsql' && '5432' }}
+  DB_USERNAME: radioroster
+  DB_PASSWORD: releasePassword
+  DB_DATABASE: radioroster
+  APP_ENV: production
+  APP_DEBUG: false
+
+jobs:
+  mariadb-release-dump:
+    name: Add ${{ inputs.db-type == 'mysql' && 'MariaDB' || inputs.db-type == 'pgsql' && 'PostgreSQL' }} ${{ inputs.db-version }} dump to release
+    runs-on: ubuntu-latest
 
     steps:
       - if: ${{ inputs.db-type == 'mysql' }}
@@ -44,23 +43,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
-      - name: Setup PHP ${{ matrix.php-versions }}
+      - name: Setup PHP 8.1
         uses: shivammathur/setup-php@e8cd65f444039503a75cf4057d55442fc4316f78
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: "8.1"
           extensions: pcntl, zip, intl, exif, mbstring, dom, fileinfo, ${{ inputs.db-type == 'mysql' && 'pdo_mysql' || inputs.db-type == 'pgsql' && 'pdo_pgsql' }}
-          coverage: xdebug
-
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache Composer Dependencies
-        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer Dependencies
         run: composer install -q --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
@@ -74,7 +61,21 @@ jobs:
         run: php artisan config:clear
 
       - name: Run Migrations
-        run: php artisan migrate -v
+        run: php artisan migrate --force
 
-      - name: Execute tests (Unit and Feature tests) via PHPUnit
-        run: vendor/bin/phpunit --coverage-text
+      - if: ${{ inputs.db-type == 'mysql' }}
+        name: Dump MariaDB ${{ inputs.db-type == 'mysql' && inputs.db-version }} database
+        run: |
+          mkdir -p database/dumps
+          docker exec mariadb mysqldump --user $DB_USERNAME --password=$DB_PASSWORD $DB_DATABASE | gzip > database/dumps/radioroster_${{ github.ref_name }}-mariadb${{ inputs.db-version }}.sql.gz
+
+      - if: ${{ inputs.db-type == 'pgsql' }}
+        name: Dump PostgreSQL ${{ inputs.db-type == 'pgsql' && inputs.db-version }} database
+        run: |
+          mkdir -p database/dumps
+          docker exec postgres sh -c 'export PGPASSWORD=${{ env.DB_PASSWORD }} && pg_dump -Fc -Z 6 -U${{ env.DB_USERNAME }} $DB_DATABASE' > database/dumps/radioroster_${{ github.ref_name }}-postgres${{ inputs.db-version }}.sql.gz
+
+      - name: Upload database dump
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          files: database/dumps/radioroster_${{ github.ref_name }}${{ inputs.db-type == 'mysql' && '-mariadb' || inputs.db-type == 'pgsql' && '-postgres' }}${{ inputs.db-version }}.sql.gz
