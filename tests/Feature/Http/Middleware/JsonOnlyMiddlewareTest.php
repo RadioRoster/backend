@@ -22,8 +22,8 @@ class JsonOnlyMiddlewareTest extends TestCase
             'POST',
             '/api/v1/login',
             server: $this->transformHeadersToServerVars([
-                'Accept' => ['text/xml', 'application/xml', 'text/plain'],
-                'Content-Type' => ['text/xml', 'application/xml', 'text/plain'],
+                'Accept' => 'text/xml, application/xml, text/plain',
+                'Content-Type' => 'text/xml, application/xml, text/plain',
             ]),
             content: '<?xml version="1.0" encoding="UTF-8"?>
                 <root>
