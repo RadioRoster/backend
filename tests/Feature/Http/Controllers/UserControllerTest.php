@@ -108,7 +108,7 @@ class UserControllerTest extends TestCase
         $newUserData = array_merge($user->toArray(), $userData);
 
         // Send a PATCH request to the update endpoint
-        $response = $this->patch('/api/v1/users/' . $user->id, $userData);
+        $response = $this->put('/api/v1/users/' . $user->id, $userData);
 
         // Assert that the response has a successful status code
         $response->assertStatus(200);

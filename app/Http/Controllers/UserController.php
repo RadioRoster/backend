@@ -51,8 +51,8 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
-            'name'      => 'sometimes|required|string',
-            'email'     => "sometimes|required|email|unique:users,email",
+            'name'      => 'required|string',
+            'email'     => 'required|email|unique:users,email',
             'password'  => 'sometimes|required|min:8|confirmed',
         ]);
 
