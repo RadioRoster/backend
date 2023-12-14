@@ -100,7 +100,7 @@ paths:
                     $ref: "#/responses/404"
                 "500":
                     $ref: "#/responses/500"
-        patch:
+        put:
             tags:
                 - Shows
             summary: "Updates an existing show by ID."
@@ -181,7 +181,7 @@ paths:
                             $ref: "#/definitions/Request"
                 "500":
                     $ref: "#/responses/500"
-        post:
+        put:
             tags:
                 - Requests
             summary: "Sends a request to the radio station's wishbox."
@@ -319,7 +319,7 @@ paths:
                     $ref: "#/responses/404"
                 "500":
                     $ref: "#/responses/500"
-        patch:
+        put:
             tags:
                 - User
             summary: "Updates a user by ID."
@@ -470,7 +470,7 @@ paths:
                     $ref: "#/responses/404"
                 "500":
                     $ref: "#/responses/500"
-        patch:
+        put:
             tags:
                 - Role
             summary: "Update a role"
