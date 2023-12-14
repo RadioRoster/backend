@@ -76,6 +76,6 @@ jobs:
           docker exec postgres sh -c 'export PGPASSWORD=${{ env.DB_PASSWORD }} && pg_dump -Fc -Z 6 -U${{ env.DB_USERNAME }} $DB_DATABASE' > database/dumps/radioroster_${{ github.ref_name }}-postgres${{ inputs.db-version }}.sql.gz
 
       - name: Upload database dump
-        uses: softprops/action-gh-release@v0.1.15
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
         with:
           files: database/dumps/radioroster_${{ github.ref_name }}${{ inputs.db-type == 'mysql' && '-mariadb' || inputs.db-type == 'pgsql' && '-postgres' }}${{ inputs.db-version }}.sql.gz
