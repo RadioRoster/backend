@@ -1000,6 +1000,79 @@ paths:
             security:
                 - BearerAuth: []
 
+    /reset_password:
+        post:
+            tags:
+                - Auth
+            summary: Start password reset
+            description: Send a password reset link to the user's email.
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - email
+                                - reset_url
+                            properties:
+                                email:
+                                    type: string
+                                    format: email
+                                reset_url:
+                                    type: string
+                                    format: uri
+                                    description: URL of the password reset form.
+            responses:
+                "204":
+                    description: Reset email successful send
+                "500":
+                    description: Unable to send reset link
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+    /reset_password/{token}:
+        post:
+            tags:
+                - Auth
+            summary: Reset password
+            description: Reset the user's password.
+            parameters:
+                - name: token
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - email
+                                - password
+                                - password_confirmation
+                            properties:
+                                email:
+                                    type: string
+                                    format: email
+                                password:
+                                    type: string
+                                    format: password
+                                password_confirmation:
+                                    type: string
+                                    format: password
+            responses:
+                "204":
+                    description: Password reset successfully
+                "500":
+                    description: Unable to send reset link
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
 components:
     schemas:
         Show:
@@ -1180,4 +1253,3 @@ components:
                 ."
             name: Authorization
             in: header
-x-original-swagger-version: "2.0"
