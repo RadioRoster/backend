@@ -46,4 +46,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function locked_shows()
+    {
+        return $this->hasMany(Show::class, 'locked_by');
+    }
+
+    // public function shows()
+    // {
+    //     return $this->belongsToMany(Show::class, 'show_moderators', 'moderator_id', 'show_id')->withTimestamps();
+    // }
 }
