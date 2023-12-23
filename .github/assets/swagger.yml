@@ -1,0 +1,1255 @@
+openapi: 3.0.1
+info:
+    title: RadioSchedule API
+    description: API for the broadcast schedule
+    license:
+        name: AGPL-3.0
+        url: https://github.com/Lapotor/RadioRoster-api/blob/main/LICENSE
+    version: 1.0.0
+servers:
+    - url: http://localhost/api/v1
+paths:
+    /shows:
+        get:
+            tags:
+                - Shows
+            summary: Returns the broadcast schedule for a specified time period.
+            operationId: getSchedule
+            parameters:
+                - name: start_date
+                  in: query
+                  description: Start date of the broadcast schedule.
+                  schema:
+                      type: string
+                      format: date-time
+                - name: end_date
+                  in: query
+                  description: End date of the broadcast schedule.
+                  schema:
+                      type: string
+                      format: date-time
+                - name: days
+                  in: query
+                  description: Number of days for which to return the broadcast schedule.
+                  schema:
+                      maximum: 30
+                      type: integer
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Show"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+        post:
+            tags:
+                - Shows
+            summary: Creates a new show.
+            operationId: createShow
+            requestBody:
+                description: The details of the new show to create.
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Show"
+                required: false
+            responses:
+                "201":
+                    description: CREATED
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Show"
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+    /shows/{id}:
+        get:
+            tags:
+                - Shows
+            summary: Retrieves a show by ID.
+            operationId: getShow
+            parameters:
+                - name: id
+                  in: path
+                  description: The ID of the show to retrieve.
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Show"
+                "400":
+                    description:
+                        Bad Request - The server cannot or will not process the request
+                        due to an apparent client error.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "404":
+                    description: Not Found - The server cannot find the requested resource.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+        put:
+            tags:
+                - Shows
+            summary: Updates an existing show by ID.
+            operationId: updateShow
+            parameters:
+                - name: id
+                  in: path
+                  description: The ID of the show to update.
+                  required: true
+                  schema:
+                      type: integer
+            requestBody:
+                description: The updated details of the show.
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Show"
+                required: false
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Show"
+                "400":
+                    description:
+                        Bad Request - The server cannot or will not process the request
+                        due to an apparent client error.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "404":
+                    description: Not Found - The server cannot find the requested resource.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+        delete:
+            tags:
+                - Shows
+            summary: Deletes a show by ID.
+            operationId: deleteShow
+            parameters:
+                - name: id
+                  in: path
+                  description: The ID of the show to delete.
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                "204":
+                    description: NO CONTENT
+                    content: {}
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "404":
+                    description: Not Found - The server cannot find the requested resource.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+    /requests:
+        get:
+            tags:
+                - Requests
+            summary: Retrieves the wishbox requests.
+            operationId: getRequests
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Request"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+        put:
+            tags:
+                - Requests
+            summary: Sends a request to the radio station's wishbox.
+            operationId: sendRequest
+            requestBody:
+                description: Information about the wish request.
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Request"
+                required: false
+            responses:
+                "201":
+                    description: CREATED
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Request"
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+    /requests/{id}:
+        delete:
+            tags:
+                - Requests
+            summary: Deletes a specific wishlist request by ID.
+            operationId: deleteRequest
+            parameters:
+                - name: id
+                  in: path
+                  description: The ID of the wishbox request to delete.
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                "204":
+                    description: NO CONTENT
+                    content: {}
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "404":
+                    description: Not Found - The server cannot find the requested resource.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+    /users:
+        get:
+            tags:
+                - User
+            summary: Returns a list of all registered users.
+            operationId: getUsers
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/User"
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+        post:
+            tags:
+                - User
+            summary: Creates a new user.
+            operationId: createUser
+            requestBody:
+                description: User object that needs to be added.
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/User"
+                required: false
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+    /users/{id}:
+        get:
+            tags:
+                - User
+            summary: Gets a user by ID.
+            operationId: getUser
+            parameters:
+                - name: id
+                  in: path
+                  description: The ID of the user to retrieve.
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+                "400":
+                    description:
+                        Bad Request - The server cannot or will not process the request
+                        due to an apparent client error.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "404":
+                    description: Not Found - The server cannot find the requested resource.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+        put:
+            tags:
+                - User
+            summary: Updates a user by ID.
+            operationId: updateUser
+            parameters:
+                - name: id
+                  in: path
+                  description: The ID of the user to update.
+                  required: true
+                  schema:
+                      type: integer
+            requestBody:
+                description: The updated user information.
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/User"
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "404":
+                    description: Not Found - The server cannot find the requested resource.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+        delete:
+            tags:
+                - User
+            summary: Deletes a user by ID.
+            operationId: deleteUser
+            parameters:
+                - name: id
+                  in: path
+                  description: The ID of the user to delete.
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                "204":
+                    description: NO CONTENT
+                    content: {}
+                "400":
+                    description:
+                        Bad Request - The server cannot or will not process the request
+                        due to an apparent client error.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "404":
+                    description: Not Found - The server cannot find the requested resource.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+    /roles:
+        get:
+            tags:
+                - Role
+            summary: Retrieves all availble roles
+            operationId: getAllRoles
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Role"
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "404":
+                    description: Not Found - The server cannot find the requested resource.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+        post:
+            tags:
+                - Role
+            summary: Add a role
+            operationId: createRole
+            requestBody:
+                description: The data for the role which should be added
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Role"
+                required: false
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Role"
+                "400":
+                    description:
+                        Bad Request - The server cannot or will not process the request
+                        due to an apparent client error.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+    /roles/{id}:
+        get:
+            tags:
+                - Role
+            summary: Retrieves a roles
+            operationId: getRole
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Role"
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "404":
+                    description: Not Found - The server cannot find the requested resource.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+        put:
+            tags:
+                - Role
+            summary: Update a role
+            operationId: updateRole
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Role"
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Role"
+                "400":
+                    description:
+                        Bad Request - The server cannot or will not process the request
+                        due to an apparent client error.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "404":
+                    description: Not Found - The server cannot find the requested resource.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+        delete:
+            tags:
+                - Role
+            summary: Deletes a role
+            operationId: deleteRole
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                "204":
+                    description: NO CONTENT
+                    content: {}
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "403":
+                    description:
+                        "Forbidden - The server understood the request, but is refusing\
+                        \ to fulfill it."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "404":
+                    description: Not Found - The server cannot find the requested resource.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+    /login:
+        post:
+            tags:
+                - Auth
+            summary: Logs in a user and returns a JWT-Token.
+            operationId: login
+            requestBody:
+                description: The user's login information.
+                content:
+                    application/json:
+                        schema:
+                            required:
+                                - password
+                                - username
+                            type: object
+                            properties:
+                                username:
+                                    type: string
+                                password:
+                                    type: string
+                required: false
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    access_token:
+                                        type: string
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+    /logout:
+        post:
+            tags:
+                - Auth
+            summary: Logs out the current user.
+            operationId: logout
+            responses:
+                "204":
+                    description: NO CONTENT
+                    content: {}
+                "401":
+                    description:
+                        Unauthorized - The request requires authentication or the user
+                        has not been authenticated.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "500":
+                    description:
+                        "Internal Server Error - A generic error message, given when\
+                        \ an unexpected condition was encountered and no more specific message\
+                        \ is suitable."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+            security:
+                - BearerAuth: []
+
+    /reset_password:
+        post:
+            tags:
+                - Auth
+            summary: Start password reset
+            description: Send a password reset link to the user's email.
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - email
+                                - reset_url
+                            properties:
+                                email:
+                                    type: string
+                                    format: email
+                                reset_url:
+                                    type: string
+                                    format: uri
+                                    description: URL of the password reset form.
+            responses:
+                "204":
+                    description: Reset email successful send
+                "500":
+                    description: Unable to send reset link
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+    /reset_password/{token}:
+        post:
+            tags:
+                - Auth
+            summary: Reset password
+            description: Reset the user's password.
+            parameters:
+                - name: token
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - email
+                                - password
+                                - password_confirmation
+                            properties:
+                                email:
+                                    type: string
+                                    format: email
+                                password:
+                                    type: string
+                                    format: password
+                                password_confirmation:
+                                    type: string
+                                    format: password
+            responses:
+                "204":
+                    description: Password reset successfully
+                "500":
+                    description: Unable to send reset link
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+
+components:
+    schemas:
+        Show:
+            required:
+                - created_at
+                - enabled
+                - end_date
+                - id
+                - is_live
+                - moderators
+                - start_date
+                - title
+                - updated_at
+            type: object
+            properties:
+                id:
+                    type: integer
+                created_at:
+                    type: string
+                    format: date-time
+                updated_at:
+                    type: string
+                    format: date-time
+                title:
+                    type: string
+                body:
+                    type: object
+                    properties: {}
+                start_date:
+                    type: string
+                    format: date-time
+                end_date:
+                    type: string
+                    format: date-time
+                is_live:
+                    type: boolean
+                enabled:
+                    type: boolean
+                moderators:
+                    minItems: 1
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            id:
+                                type: integer
+                            name:
+                                type: string
+                            primary:
+                                type: boolean
+                locked_by:
+                    type: integer
+        Request:
+            required:
+                - created_at
+                - id
+                - message
+                - name
+            type: object
+            properties:
+                id:
+                    type: integer
+                name:
+                    type: string
+                message:
+                    type: string
+                created_at:
+                    type: string
+                    format: date-time
+        User:
+            required:
+                - created_at
+                - email
+                - id
+                - name
+                - password
+                - updated_at
+            type: object
+            properties:
+                id:
+                    type: integer
+                created_at:
+                    type: string
+                    format: date-time
+                updated_at:
+                    type: string
+                    format: date-time
+                name:
+                    type: string
+                email:
+                    type: string
+                email_verified_at:
+                    type: string
+                    format: date-time
+                password:
+                    type: string
+                    format: password
+                role:
+                    type: integer
+        Role:
+            required:
+                - created_at
+                - id
+                - name
+                - permissions
+                - updated_at
+            type: object
+            properties:
+                id:
+                    type: integer
+                created_at:
+                    type: string
+                    format: date-time
+                updated_at:
+                    type: string
+                    format: date-time
+                name:
+                    type: string
+                permissions:
+                    type: object
+                    properties: {}
+        Error:
+            type: object
+            properties:
+                error:
+                    type: string
+                    example: Not Found
+                status:
+                    type: integer
+                    example: 404
+                message:
+                    type: string
+                    example: The server cannot find the requested resource.
+    responses:
+        "400":
+            description:
+                Bad Request - The server cannot or will not process the request
+                due to an apparent client error.
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/Error"
+        "401":
+            description:
+                Unauthorized - The request requires authentication or the user
+                has not been authenticated.
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/Error"
+        "403":
+            description:
+                "Forbidden - The server understood the request, but is refusing\
+                \ to fulfill it."
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/Error"
+        "404":
+            description: Not Found - The server cannot find the requested resource.
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/Error"
+        "500":
+            description:
+                "Internal Server Error - A generic error message, given when an\
+                \ unexpected condition was encountered and no more specific message is suitable."
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/Error"
+    securitySchemes:
+        BearerAuth:
+            type: apiKey
+            description:
+                "Enter the token with the `Bearer: ` prefix, e.g. \"Bearer abcde12345\"\
+                ."
+            name: Authorization
+            in: header
