@@ -6,8 +6,7 @@ use App\Http\Resources\ShowResource;
 use App\Models\Show;
 use App\Permissions\ShowsPermissions;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 class ShowController extends Controller
 {
@@ -19,6 +18,15 @@ class ShowController extends Controller
      */
     public function index()
     {
+        /**
+         * If no query parameters are provided, it should return the cached result.
+         */
+        if (count(request()->all()) === 0 && !auth()->check()) {
+            $res = Cache::get('shows_index');
+            if ($res) {
+                return ShowResource::collection($res);
+            }
+        }
 
         static $SORT_OPTIONS = [
             'id',
@@ -70,7 +78,7 @@ class ShowController extends Controller
         }
 
         $shows->where(function ($query) use ($validated) {
-            $NOW = now();
+            $NOW = now()->today();
             if (isset($validated['start_date'])) {
                 $query->whereBetween('start_date',
                 [
@@ -108,17 +116,20 @@ class ShowController extends Controller
          * Hide shows that are not enabled and the primary moderator is not the current user.
          */
         if (auth()->check()) {
+            /** @var \App\Models\User $user */
             $user = auth()->user();
-            $shows->where(function ($query) use ($user) {
-                $query->where('enabled', '=', true)
-                    ->orWhere(function ($query) use ($user) {
-                        $query->where('enabled', '=', false)
-                            ->whereHas('moderators', function ($query) use ($user) {
-                                $query->where('moderator_id', '=', $user->id)
-                                    ->where('primary', '=', true);
+            if (!$user->hasPermissionTo(ShowsPermissions::CAN_VIEW_DISABLED_SHOWS_OTHERS)) {
+                $shows->where(function ($query) use ($user) {
+                    $query->where('enabled', '=', true)
+                        ->orWhere(function ($query) use ($user) {
+                            $query->where('enabled', '=', false)
+                                ->whereHas('moderators', function ($query) use ($user) {
+                                    $query->where('moderator_id', '=', $user->id)
+                                        ->where('primary', '=', true);
                             });
                     });
-            });
+                });
+            }
         }
 
         /**
@@ -164,7 +175,6 @@ class ShowController extends Controller
             $shows->orderBy('start_date');
         }
 
-
         /**
          * If the query parameter "per_page" is set,
          * it should return the given amount of shows per page.
@@ -174,6 +184,10 @@ class ShowController extends Controller
             $res = $shows->paginate($validated['per_page']);
         } else {
             $res = $shows->paginate(25);
+            // Cache the result if no query parameters are provided
+            if (count(request()->all()) === 0 && !auth()->check()) {
+                Cache::put('shows_index', $res, 60);
+            }
         }
 
         return ShowResource::collection($res);
