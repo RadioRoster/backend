@@ -9,6 +9,7 @@
         ":timezone(Europe/Berlin)",
         ":pinAllExceptPeerDependencies",
         ":rebaseStalePrs",
+        ":maintainLockFilesWeekly",
         ":label(Scope: Deps)"
     ],
     "baseBranches": ["main"],
