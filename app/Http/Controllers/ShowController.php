@@ -170,7 +170,26 @@ class ShowController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'start_date' => 'required|date|before:end_date',
+            'end_date' => 'required|date|after:start_date',
+        ]);
+        // Check if there is a show which overlaps with the given start and end date.
+        $overlapCount = Show::query();
+
+        $overlapCount->where(function ($query) use ($request) {
+            $query->whereRaw('? BETWEEN start_date AND end_date', [$request->start_date]);
+        });
+        $overlapCount->orWhere(function ($query) use ($request) {
+            $query->whereRaw('? BETWEEN start_date AND end_date', [$request->end_date]);
+        });
+        $overlapCount->orWhere(function ($query) use ($request) {
+            $query->where('start_date', '<=', $request->start_date);
+            $query->where('end_date', '>=', $request->end_date);
+        });
+
+        echo $overlapCount->count();
     }
 
     /**
