@@ -24,16 +24,55 @@ paths:
             format: date-time
         - name: end_date
           in: query
-          description: End date of the broadcast schedule.
+          description: End date of the broadcast schedule. End date must be less than 30 days from today if not logged in
           schema:
             type: string
             format: date-time
-        - name: days
+        - name: live
           in: query
-          description: Number of days for which to return the broadcast schedule.
+          description: If only live shows or not live shows should be returned.
           schema:
-            maximum: 30
+            type: boolean
+        - name: moderator[]
+          in: query
+          description: Array of user ids which shows should be returned.
+          schema:
+            type: array
+            items:
+              type: integer
+        - name: primary
+          in: query
+          description: If only show should returned where `moderator[]` is primary.
+          schema:
+            type: boolean
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum:
+              - id
+              - id:asc
+              - id:desc
+              - start_date
+              - start_date:asc
+              - start_date:desc
+              - end_date
+              - end_date:asc
+              - end_date:desc
+            default: start_date
+        - name: per_page
+          in: query
+          description: Items to load per page.
+          schema:
             type: integer
+            maximum: 50
+            default: 25
+        - name: page
+          in: query
+          description: Page to load.
+          schema:
+            type: integer
+            default: 1
       responses:
         "200":
           description: OK
