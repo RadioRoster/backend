@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ShowResource;
+use App\Http\Responses\ApiErrorResponse;
 use App\Models\Show;
 use App\Permissions\ShowsPermissions;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Response;
 
 class ShowController extends Controller
 {
@@ -14,30 +15,20 @@ class ShowController extends Controller
     /**
      * Retrieve a paginated list of shows based on the provided query parameters.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection | \App\Http\Responses\ApiErrorResponse
      */
     public function index()
     {
-        /**
-         * If no query parameters are provided, it should return the cached result.
-         */
-        if (count(request()->all()) === 0 && !auth()->check()) {
-            $res = Cache::get('shows_index');
-            if ($res) {
-                return ShowResource::collection($res);
-            }
-        }
-
         static $SORT_OPTIONS = [
             'id',
             'id:asc',
             'id:desc',
-            'start',
-            'start:asc',
-            'start:desc',
-            'end',
-            'end:asc',
-            'end:desc',
+            'start_date',
+            'start_date:asc',
+            'start_date:desc',
+            'end_date',
+            'end_date:asc',
+            'end_date:desc',
         ];
 
         $casts = [
@@ -53,9 +44,8 @@ class ShowController extends Controller
         ];
 
         $rules = [
-            'start_date' => ['date'],
-            'end_date' => ['exclude_without:start_date', 'date', 'after:start_date'],
-            'days' => ['integer', 'min:1'],
+            'start_date' => ['required', 'date', 'before:end_date'],
+            'end_date' => ['required', 'date', 'after:start_date'],
             'live' => 'boolean',
             'moderator' => ['array'],
             'moderator.*' => ['integer', 'distinct', 'exists:users,id'],
@@ -74,42 +64,28 @@ class ShowController extends Controller
         ]);
 
         if (!auth()->check()) {
+            if ($validated['start_date'] < today() ) {
+                return new ApiErrorResponse('Start date must be greater than today.', status: Response::HTTP_BAD_REQUEST);
+            }
+            if ($validated['end_date'] > today()->addMonth() ) {
+                return new ApiErrorResponse('End date must be less than 30 days from today.', status: Response::HTTP_BAD_REQUEST);
+            }
+
             $shows->where('enabled', '=', true);
         }
 
+
         $shows->where(function ($query) use ($validated) {
-            $NOW = now()->today();
-            if (isset($validated['start_date'])) {
-                $query->whereBetween('start_date',
+            $query->whereBetween('start_date',
                 [
                     $validated['start_date'],
-                    $validated['end_date'] ?? $validated['days'] ?? $validated['start_date']->addDays(7)
+                    $validated['end_date'],
                 ]);
-            } elseif (isset($validated['days']) && !isset($validated['start_date'])) {
-                $inXDays = (clone $NOW)->addDays($validated['days']);
-                $query->whereBetween('start_date',
+            $query->orWhereBetween('end_date',
                 [
-                    $NOW,
-                    $inXDays
-                ])
-                ->orWhereBetween('end_date',
-                [
-                    $NOW,
-                    $inXDays
+                    $validated['start_date'],
+                    $validated['end_date'],
                 ]);
-            } else {
-                $in7Days = (clone $NOW)->addDays(7);
-                $query->whereBetween('start_date',
-                [
-                    $NOW,
-                    $in7Days
-                ])
-                ->orWhereBetween('end_date',
-                [
-                    $NOW,
-                    $in7Days
-                ]);
-            }
         });
 
         /**
@@ -184,10 +160,6 @@ class ShowController extends Controller
             $res = $shows->paginate($validated['per_page']);
         } else {
             $res = $shows->paginate(25);
-            // Cache the result if no query parameters are provided
-            if (count(request()->all()) === 0 && !auth()->check()) {
-                Cache::put('shows_index', $res, 60);
-            }
         }
 
         return ShowResource::collection($res);
