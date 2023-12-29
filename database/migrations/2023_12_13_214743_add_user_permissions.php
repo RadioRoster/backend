@@ -4,6 +4,7 @@ use App\Permissions\UsersPermissions;
 use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 
 return new class extends Migration
 {
@@ -12,46 +13,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::table('permissions')->insert(
-            [
-                [
-                    'name' => UsersPermissions::CAN_LIST_USERS,
-                    'guard_name' => 'web',
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ],
-                [
-                    'name' => UsersPermissions::CAN_SHOW_USERS,
-                    'guard_name' => 'web',
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ],
-                [
-                    'name' => UsersPermissions::CAN_CREATE_USERS,
-                    'guard_name' => 'web',
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ],
-                [
-                    'name' => UsersPermissions::CAN_UPDATE_USERS,
-                    'guard_name' => 'web',
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ],
-                [
-                    'name' => UsersPermissions::CAN_UPDATE_USERS_SELF,
-                    'guard_name' => 'web',
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ],
-                [
-                    'name' => UsersPermissions::CAN_DELETE_USERS,
-                    'guard_name' => 'web',
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ]
-            ]
-        );
+        Permission::create([
+            'name' => 'users.list',
+            'guard_name' => 'web',
+        ]);
+        Permission::create([
+            'name' => 'users.show',
+            'guard_name' => 'web',
+        ]);
+        Permission::create([
+            'name' => 'users.create',
+            'guard_name' => 'web',
+        ]);
+        Permission::create([
+            'name' => 'users.update',
+            'guard_name' => 'web',
+        ]);
+        Permission::create([
+            'name' => 'users.update.self',
+            'guard_name' => 'web',
+        ]);
+        Permission::create([
+            'name' => 'users.delete',
+            'guard_name' => 'web',
+        ]);
     }
 
     /**
@@ -60,12 +45,12 @@ return new class extends Migration
     public function down(): void
     {
         DB::table('permissions')->whereIn('name', [
-            UsersPermissions::CAN_LIST_USERS,
-            UsersPermissions::CAN_SHOW_USERS,
-            UsersPermissions::CAN_CREATE_USERS,
-            UsersPermissions::CAN_UPDATE_USERS,
-            UsersPermissions::CAN_UPDATE_USERS_SELF,
-            UsersPermissions::CAN_DELETE_USERS,
+            'users.list',
+            'users.show',
+            'users.create',
+            'users.update',
+            'users.update.self',
+            'users.delete',
         ])->delete();
     }
 };
