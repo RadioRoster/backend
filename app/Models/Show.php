@@ -15,6 +15,10 @@ class Show extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'title',
+        'body',
+        'enabled',
+        'is_live',
     ];
 
     /**
@@ -31,6 +35,10 @@ class Show extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+        'enabled' => 'boolean',
+        'is_live' => 'boolean',
     ];
 
     public function locked_by()
