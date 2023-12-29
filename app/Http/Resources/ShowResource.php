@@ -20,7 +20,7 @@ class ShowResource extends JsonResource
             return [
                 'id' => $moderator->id,
                 'name' => $moderator->name,
-                'primary' => $moderator->moderators->primary,
+                'primary' => $moderator->moderators->primary === 1,
             ];
         });
 
