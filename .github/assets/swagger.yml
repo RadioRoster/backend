@@ -1079,64 +1079,77 @@ components:
   schemas:
     Show:
       required:
-        - created_at
-        - enabled
-        - end_date
         - id
-        - is_live
-        - moderators
-        - start_date
         - title
+        - body
+        - start_date
+        - end_date
+        - moderators
+        - is_live
+        - enabled
+        - locked_by
+        - created_at
         - updated_at
       type: object
       properties:
         id:
           type: integer
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
+          readOnly: true
         title:
           type: string
         body:
-          type: object
-          properties: {}
+          type: string
+          nullable: true
         start_date:
           type: string
           format: date-time
         end_date:
           type: string
           format: date-time
-        is_live:
-          type: boolean
-        enabled:
-          type: boolean
         moderators:
           minItems: 1
           type: array
           items:
             type: object
+            required:
+              - id
+              - name
+              - primary
             properties:
               id:
                 type: integer
               name:
                 type: string
+                readOnly: true
               primary:
                 type: boolean
+        is_live:
+          type: boolean
+        enabled:
+          type: boolean
         locked_by:
           type: integer
+          nullable: true
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
     Request:
       required:
-        - created_at
         - id
-        - message
         - name
+        - message
+        - created_at
       type: object
       properties:
         id:
           type: integer
+          readOnly: true
         name:
           type: string
         message:
@@ -1144,6 +1157,7 @@ components:
         created_at:
           type: string
           format: date-time
+          readOnly: true
     User:
       required:
         - created_at
@@ -1156,46 +1170,66 @@ components:
       properties:
         id:
           type: integer
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
+          readOnly: true
         name:
           type: string
         email:
           type: string
+          format: email
         email_verified_at:
           type: string
           format: date-time
+          readOnly: true
+          nullable: true
         password:
           type: string
           format: password
         role:
           type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
     Role:
       required:
-        - created_at
         - id
         - name
         - permissions
+        - created_at
         - updated_at
       type: object
       properties:
         id:
           type: integer
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
+          readOnly: true
         name:
           type: string
         permissions:
-          type: object
-          properties: {}
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - name
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+                readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
     Error:
       type: object
       properties:
@@ -1249,9 +1283,5 @@ components:
             $ref: "#/components/schemas/Error"
   securitySchemes:
     BearerAuth:
-      type: apiKey
-      description:
-        "Enter the token with the `Bearer: ` prefix, e.g. \"Bearer abcde12345\"\
-        ."
-      name: Authorization
-      in: header
+      type: http
+      scheme: bearer
