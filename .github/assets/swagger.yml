@@ -657,6 +657,111 @@ paths:
       security:
         - BearerAuth: []
 
+  /permissions:
+    get:
+      tags:
+        - Permission
+      summary: Retrieves all permissions
+      operationId: getPermissions
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum:
+              - id
+              - id:asc
+              - id:desc
+              - name
+              - name:asc
+              - name:desc
+            default: id
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 25
+            maximum: 50
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 0
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Permission"
+        "403":
+          description:
+            "Forbidden - The server understood the request, but is refusing\
+            \ to fulfill it."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description:
+            "Internal Server Error - A generic error message, given when\
+            \ an unexpected condition was encountered and no more specific message\
+            \ is suitable."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+        - BearerAuth: []
+
+  /permissions/{id}:
+    get:
+      tags:
+        - Permission
+      summary: Retrieves a permission
+      operationId: getPermission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Permission"
+        "403":
+          description:
+            "Forbidden - The server understood the request, but is refusing\
+            \ to fulfill it."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found - The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description:
+            "Internal Server Error - A generic error message, given when\
+            \ an unexpected condition was encountered and no more specific message\
+            \ is suitable."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+        - BearerAuth: []
+
   /roles:
     get:
       tags:
@@ -1187,6 +1292,25 @@ components:
         role:
           type: integer
           nullable: true
+
+    Permission:
+      type: object
+      required:
+        - id
+        - name
+        - guard
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        guard:
+          type: string
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -1195,6 +1319,7 @@ components:
           type: string
           format: date-time
           readOnly: true
+
     Role:
       required:
         - id
