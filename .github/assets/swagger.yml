@@ -696,6 +696,111 @@ paths:
       security:
         - BearerAuth: []
 
+  /permissions:
+    get:
+      tags:
+        - Permission
+      summary: Retrieves all permissions
+      operationId: getPermissions
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum:
+              - id
+              - id:asc
+              - id:desc
+              - name
+              - name:asc
+              - name:desc
+            default: id
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 25
+            maximum: 50
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 0
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Permission"
+        "403":
+          description:
+            "Forbidden - The server understood the request, but is refusing\
+            \ to fulfill it."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description:
+            "Internal Server Error - A generic error message, given when\
+            \ an unexpected condition was encountered and no more specific message\
+            \ is suitable."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+        - BearerAuth: []
+
+  /permissions/{id}:
+    get:
+      tags:
+        - Permission
+      summary: Retrieves a permission
+      operationId: getPermission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Permission"
+        "403":
+          description:
+            "Forbidden - The server understood the request, but is refusing\
+            \ to fulfill it."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found - The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description:
+            "Internal Server Error - A generic error message, given when\
+            \ an unexpected condition was encountered and no more specific message\
+            \ is suitable."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+        - BearerAuth: []
+
   /roles:
     get:
       tags:
@@ -1118,19 +1223,57 @@ components:
   schemas:
     Show:
       required:
-        - created_at
-        - enabled
-        - end_date
         - id
-        - is_live
-        - moderators
-        - start_date
         - title
+        - body
+        - start_date
+        - end_date
+        - moderators
+        - is_live
+        - enabled
+        - locked_by
+        - created_at
         - updated_at
       type: object
       properties:
         id:
           type: integer
+          readOnly: true
+        title:
+          type: string
+        body:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        moderators:
+          minItems: 1
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - name
+              - primary
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+                readOnly: true
+              primary:
+                type: boolean
+        is_live:
+          type: boolean
+        enabled:
+          type: boolean
+        locked_by:
+          type: integer
+          nullable: true
           readOnly: true
         created_at:
           type: string
@@ -1140,42 +1283,12 @@ components:
           type: string
           format: date-time
           readOnly: true
-        title:
-          type: string
-        body:
-          type: object
-          properties: {}
-        start_date:
-          type: string
-          format: date-time
-        end_date:
-          type: string
-          format: date-time
-        is_live:
-          type: boolean
-        enabled:
-          type: boolean
-        moderators:
-          minItems: 1
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              name:
-                type: string
-              primary:
-                type: boolean
-        locked_by:
-          type: integer
-          nullable: true
     Request:
       required:
-        - created_at
         - id
-        - message
         - name
+        - message
+        - created_at
       type: object
       properties:
         id:
@@ -1202,6 +1315,41 @@ components:
         id:
           type: integer
           readOnly: true
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        email_verified_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        password:
+          type: string
+          format: password
+        role:
+          type: integer
+          nullable: true
+
+    Permission:
+      type: object
+      required:
+        - id
+        - name
+        - guard
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        guard:
+          type: string
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -1210,31 +1358,34 @@ components:
           type: string
           format: date-time
           readOnly: true
-        name:
-          type: string
-        email:
-          type: string
-        email_verified_at:
-          type: string
-          format: date-time
-          readOnly: true
-        password:
-          type: string
-          format: password
-        role:
-          type: integer
+
     Role:
       required:
-        - created_at
         - id
         - name
         - permissions
+        - created_at
         - updated_at
       type: object
       properties:
         id:
           type: integer
           readOnly: true
+        name:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - name
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+                readOnly: true
         created_at:
           type: string
           format: date-time
@@ -1243,11 +1394,6 @@ components:
           type: string
           format: date-time
           readOnly: true
-        name:
-          type: string
-        permissions:
-          type: object
-          properties: {}
     Error:
       type: object
       properties:
@@ -1301,9 +1447,5 @@ components:
             $ref: "#/components/schemas/Error"
   securitySchemes:
     BearerAuth:
-      type: apiKey
-      description:
-        "Enter the token with the `Bearer: ` prefix, e.g. \"Bearer abcde12345\"\
-        ."
-      name: Authorization
-      in: header
+      type: http
+      scheme: bearer
