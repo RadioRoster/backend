@@ -25,4 +25,5 @@ Route::group(['prefix' => 'v1'], function () {
     require __DIR__ . '/api/v1/user.php';
     require __DIR__ . '/api/v1/role.php';
     require __DIR__ . '/api/v1/request.php';
+    require __DIR__ . '/api/v1/permission.php';
 });

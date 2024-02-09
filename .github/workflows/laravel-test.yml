@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
       - name: Setup PHP ${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@97e0a9729aaea439548b7c85c7cd3ef503aa5365
+        uses: shivammathur/setup-php@6d7209f44a25a59e904b1ee9f3b0c33ab2cd888d
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: pcntl, zip, intl, exif, mbstring, dom, fileinfo, ${{ inputs.db-type == 'mysql' && 'pdo_mysql' || inputs.db-type == 'pgsql' && 'pdo_pgsql' }}
@@ -56,7 +56,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer Dependencies
-        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3
+        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
