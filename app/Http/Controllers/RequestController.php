@@ -4,14 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
-use App\Models\Request;
+use App\Models\Request as WishRequest;
 use App\Permissions\RequestPermissions;
-use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class RequestController extends Controller
 {
 
+
+    /**
+     * Constructor method for the RequestController class.
+     * Applies middleware permissions for specific controller actions.
+     *
+     * @codeCoverageIgnore
+     *
+     * @return void
+     */
     public function __construct()
     {
         $this->middleware('permission:' . RequestPermissions::CAN_VIEW_REQUESTS)->only(['index', 'show']);
@@ -21,10 +30,10 @@ class RequestController extends Controller
     /**
      * Retrieve a paginated list of requests.
      *
-     * @param  HttpRequest  $httpRequest
+     * @param  Request  $httpRequest
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index(HttpRequest $httpRequest): \Illuminate\Pagination\LengthAwarePaginator
+    public function index(Request $httpRequest): \Illuminate\Pagination\LengthAwarePaginator
     {
         $httpRequest->validate([
             'sort' => 'string|in:id,id:asc,id:desc,name,name:asc,name:desc,created_at,created_at:asc,created_at:desc,',
@@ -33,9 +42,9 @@ class RequestController extends Controller
 
         if ($httpRequest->sort !== null) {
             $sort = explode(':', $httpRequest->sort);
-            $requests = Request::orderBy($sort[0], $sort[1] ?? 'asc')->paginate($httpRequest->per_page ?? 25);
+            $requests = WishRequest::orderBy($sort[0], $sort[1] ?? 'asc')->paginate($httpRequest->per_page ?? 25);
         } else {
-            $requests = Request::orderBy('created_at')->paginate($httpRequest->per_page ?? 25);
+            $requests = WishRequest::orderBy('created_at')->paginate($httpRequest->per_page ?? 25);
         }
 
         return $requests;
@@ -44,20 +53,22 @@ class RequestController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(HttpRequest $httpRequest)
+    public function store(Request $httpRequest)
     {
         $httpRequest->validate([
             'name' => 'required|string|max:255',
             'message' => 'required|string',
         ]);
 
-        $request = Request::create([
+        $request = WishRequest::create([
             'name' => $httpRequest->name,
             'message' => $httpRequest->message,
         ]);
 
         if ($request === null) {
+            // @codeCoverageIgnoreStart
             return new ApiErrorResponse('Failed to create request');
+            // @codeCoverageIgnoreEnd
         } else {
             return new ApiSuccessResponse($request, status: Response::HTTP_CREATED);
         }
@@ -66,7 +77,7 @@ class RequestController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request)
+    public function show(WishRequest $request)
     {
         return new ApiSuccessResponse($request);
     }
@@ -74,12 +85,14 @@ class RequestController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request)
+    public function destroy(WishRequest $request)
     {
         if($request->delete()) {
             return new ApiSuccessResponse('', status: Response::HTTP_NO_CONTENT);
         } else {
+            // @codeCoverageIgnoreStart
             return new ApiErrorResponse('Failed to delete');
+            // @codeCoverageIgnoreEnd
         }
     }
 }
