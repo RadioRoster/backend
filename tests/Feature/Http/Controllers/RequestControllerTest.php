@@ -89,6 +89,36 @@ class RequestControllerTest extends TestCase
 
         $response->assertStatus(200);
 
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'id',
+                    'name',
+                    'message',
+                    'created_at',
+                ],
+            ],
+            'links' => [
+                '*' => [
+                    'url',
+                    'label',
+                    'active',
+                ],
+            ],
+            'first_page_url',
+            'from',
+            'last_page',
+            'last_page_url',
+            'next_page_url',
+            'path',
+            'per_page',
+            'prev_page_url',
+            'to',
+            'total',
+        ]);
+
+        $testReq = $testReq->sortByDesc('id')->values()->take(5);
+
         $response->assertJsonFragment([
             'id' => $testReq[0]->id,
             'name' => $testReq[0]->name,
