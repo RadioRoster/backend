@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Permission::create([
-            'name' => 'shows.view-disabled.others',
+            'name' => 'shows.view.disabled.others',
             'guard_name' => 'web',
         ]);
         Permission::create([
@@ -40,7 +40,7 @@ return new class extends Migration
             'guard_name' => 'web',
         ]);
         Permission::create([
-            'name' => 'shows.be-primary-moderator',
+            'name' => 'shows.be-moderator.primary',
             'guard_name' => 'web',
         ]);
         Permission::create([

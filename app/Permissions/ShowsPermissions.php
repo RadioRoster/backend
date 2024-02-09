@@ -10,7 +10,7 @@ namespace App\Permissions;
 class ShowsPermissions
 {
     /** Permission for viewing others disabled shows. */
-    public const CAN_VIEW_DISABLED_SHOWS_OTHERS = 'shows.view-disabled.others';
+    public const CAN_VIEW_DISABLED_SHOWS_OTHERS = 'shows.view.disabled.others';
 
     /** Permission for creating own shows as primary moderator. */
     public const CAN_CREATE_SHOWS = 'shows.create';
@@ -31,7 +31,7 @@ class ShowsPermissions
     public const CAN_DELETE_SHOWS_OTHERS = 'shows.delete.others';
 
     /** Permission to be primary moderator of a show. */
-    public const CAN_BE_PRIMARY_MODERATOR = 'shows.be-primary-moderator';
+    public const CAN_BE_PRIMARY_MODERATOR = 'shows.be-moderator.primary';
 
     /** Permission for adding non-primary moderators to a show. */
     public const CAN_ADD_MODERATORS = 'shows.add-moderators';
