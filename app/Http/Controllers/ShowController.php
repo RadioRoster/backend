@@ -213,7 +213,7 @@ class ShowController extends Controller
          * it should return the given amount of shows per page.
          * If "per_page" isn't set, it should return 25 shows per page, maximum 50.
          */
-        if ($request->sort !== null && $request->per_page <= 50) {
+        if ($request->per_page <= 50) {
             $res = $shows->paginate($request->per_page);
         } else {
             $res = $shows->paginate(25);
