@@ -48,7 +48,10 @@ class Show extends Model
 
     public function moderators()
     {
-        return $this->belongsToMany(User::class, 'show_moderators', 'show_id', 'moderator_id')->as('moderators')->withTimestamps();
+        return $this->belongsToMany(User::class, 'show_moderators', 'show_id', 'moderator_id')
+            ->withPivot('primary')
+            ->as('moderators')
+            ->withTimestamps();
     }
 
     public function primary_moderator()
