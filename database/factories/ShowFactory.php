@@ -37,6 +37,12 @@ class ShowFactory extends Factory
         ];
     }
 
+    /**
+     * Add a user to the show and set it as primary.
+     * Add a random number of users to the show, which are not already added.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
     public function withUser()
     {
         return $this->afterCreating(function (Show $show) {
