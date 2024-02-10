@@ -65,17 +65,24 @@ class ShowControllerTest extends TestCase
             ],
         ]);
 
-        // Sort the shows by start date and take the first 5
-        $shows = $shows->sortBy('start_date')->values()->take($perPage);
+        $sortedShows = $shows->sortBy('start_date');
+
+        $sortedShows->values()->all();
+
+        // remove shows where the end or start date is not within the range
+        $sortedShows = $sortedShows->filter(function ($show) use ($today, $inAMonth) {
+            return $show->start_date->isBetween($today, $inAMonth) || $show->end_date->isBetween($today, $inAMonth);
+        });
+
 
         // Assert that the response contains the correct show data
         $response->assertJsonFragment([
-            'id' => $shows->first()->id,
-            'title' => $shows->first()->title,
-            'start_date' => $shows->first()->start_date,
-            'end_date' => $shows->first()->end_date,
-            'is_live' => $shows->first()->is_live,
-            'enabled' => $shows->first()->enabled,
+            'id' => $sortedShows->first()->id,
+            'title' => $sortedShows->first()->title,
+            'start_date' => $sortedShows->first()->start_date,
+            'end_date' => $sortedShows->first()->end_date,
+            'is_live' => $sortedShows->first()->is_live,
+            'enabled' => $sortedShows->first()->enabled,
         ]);
     }
 }
