@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
       - name: Setup PHP ${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@6d7209f44a25a59e904b1ee9f3b0c33ab2cd888d
+        uses: shivammathur/setup-php@67271131b1870a5a241694badbda0ac2cae0648e
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: pcntl, zip, intl, exif, mbstring, dom, fileinfo, ${{ inputs.db-type == 'mysql' && 'pdo_mysql' || inputs.db-type == 'pgsql' && 'pdo_pgsql' }}
