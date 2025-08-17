@@ -42,7 +42,7 @@ jobs:
           docker run -d --name postgres -e POSTGRES_DB=${{ env.DB_DATABASE }} -e POSTGRES_USER=${{ env.DB_USERNAME }} -e POSTGRES_PASSWORD=${{ env.DB_PASSWORD }} --publish 5432:5432 postgres:${{ inputs.db-version }}
 
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
 
       - name: Setup PHP ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@67271131b1870a5a241694badbda0ac2cae0648e
