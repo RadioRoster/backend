@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        php-versions: ["8.1", "8.2", "8.3"]
+        php-versions: ["8.2", "8.3", "8.4"]
 
     steps:
       - if: ${{ inputs.db-type == 'mysql' }}
@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Setup PHP ${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@67271131b1870a5a241694badbda0ac2cae0648e
+        uses: shivammathur/setup-php@0f7f1d08e3e32076e51cae65eb0b0c871405b16e # v2
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: pcntl, zip, intl, exif, mbstring, dom, fileinfo, ${{ inputs.db-type == 'mysql' && 'pdo_mysql' || inputs.db-type == 'pgsql' && 'pdo_pgsql' }}

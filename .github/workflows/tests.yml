@@ -27,4 +27,4 @@ jobs:
 
     strategy:
       matrix:
-        pgsql-versions: ["14", "15", "16"]
+        pgsql-versions: ["16", "17"]
