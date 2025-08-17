@@ -12,11 +12,15 @@
         ":maintainLockFilesWeekly",
         ":label(Scope: Deps)"
     ],
-    "baseBranches": ["main"],
+    "baseBranchPatterns": [
+        "main"
+    ],
     "minimumReleaseAge": "3 days",
     "rollbackPrs": true,
     "automergeStrategy": "squash",
-    "reviewers": ["team:backend"],
+    "reviewers": [
+        "team:backend"
+    ],
     "packageRules": [
         {
             "description": "Allow ranges for PHP",
@@ -26,13 +30,17 @@
         {
             "description": "Require approval for minor updates on PHP",
             "matchPackageNames": "php",
-            "matchUpdateTypes": ["minor"],
+            "matchUpdateTypes": [
+                "minor"
+            ],
             "dependencyDashboardApproval": true
         },
         {
             "description": "Disallow major updates for PHP",
             "matchPackageNames": "php",
-            "matchUpdateTypes": ["major"],
+            "matchUpdateTypes": [
+                "major"
+            ],
             "enabled": false
         }
     ]
