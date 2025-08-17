@@ -16,7 +16,7 @@
     "minimumReleaseAge": "3 days",
     "rollbackPrs": true,
     "automergeStrategy": "squash",
-    "reviewers": ["@lapotor", "@whyauthentic"],
+    "reviewers": ["team:backend"],
     "packageRules": [
         {
             "description": "Allow ranges for PHP",
