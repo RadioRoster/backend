@@ -46,11 +46,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        if (!$request->user()) {
-            return new ApiSuccessResponse('No user found');
-        }
-
-        $request->user()->currentAccessToken()->delete();
+        $request->user()?->currentAccessToken()?->delete();
 
         return new ApiSuccessResponse('User logged out successfully');
     }
