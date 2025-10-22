@@ -14,9 +14,7 @@ use Spatie\Permission\Middleware\PermissionMiddleware;
 class RoleController extends Controller implements HasMiddleware
 {
     /**
-     * RoleController constructor.
-     *
-     * @codeCoverageIgnore
+     * Return the middleware configurations for the controller.
      */
     public static function middleware(): array
     {
