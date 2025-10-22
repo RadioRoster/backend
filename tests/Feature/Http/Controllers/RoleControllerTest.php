@@ -9,21 +9,17 @@ use Laravel\Sanctum\Sanctum;
 use App\Models\Role;
 use App\Permissions\UsersPermissions;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Group;
 use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
-/**
- * @coversDefaultClass \App\Http\Controllers\RoleController
- */
+#[Group('RoleController')]
 class RoleControllerTest extends TestCase
 {
     use RefreshDatabase;
 
     /**
      * Test the index method of RoleController with a user with minimal permissions.
-     *
-     * @group RoleController.index
-     * @covers ::index
      */
     public function test_index_roles_with_minimal_permission(): void
     {
@@ -53,9 +49,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the index method of RoleController without roles permissions.
-     *
-     * @group RoleController.index
-     * @covers ::index
      */
     public function test_not_index_roles_without_any_permission(): void
     {
@@ -74,9 +67,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the index method of RoleController with all unauthorized role permissions.
-     *
-     * @group RoleController.index
-     * @covers ::index
      */
     public function test_not_index_roles_with_unauthorized_role_permissions(): void
     {
@@ -99,9 +89,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the store method of RoleController with minimal permissions.
-     *
-     * @group RoleController.store
-     * @covers ::store
      */
     public function test_store_roles_with_minimal_permission(): void
     {
@@ -140,9 +127,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the store method of RoleController with wrong permission id.
-     *
-     * @group RoleController.store
-     * @covers ::store
      */
     public function test_not_store_roles_with_wrong_permission_id(): void
     {
@@ -174,9 +158,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the store method of RoleController with duplicate name.
-     *
-     * @group RoleController.store
-     * @covers ::store
      */
     public function test_not_store_roles_with_duplicate_name(): void
     {
@@ -206,9 +187,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the store method of RoleController with unauthorized role permissions.
-     *
-     * @group RoleController.store
-     * @covers ::store
      */
     public function test_not_store_roles_with_unauthorized_role_permissions(): void
     {
@@ -238,9 +216,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the store method of RoleController without any permissions.
-     *
-     * @group RoleController.store
-     * @covers ::store
      */
     public function test_not_stores_role_without_any_permission(): void
     {
@@ -266,9 +241,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the show method of RoleController with minimal permissions.
-     *
-     * @group RoleController.show
-     * @covers ::show
      */
     public function test_show_roles_with_minimal_permission(): void
     {
@@ -292,9 +264,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the show method of RoleController with wrong role id.
-     *
-     * @group RoleController.show
-     * @covers ::show
      */
     public function test_not_show_roles_with_wrong_role_id(): void
     {
@@ -319,9 +288,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the show method of RoleController with unauthorized role permissions.
-     *
-     * @group RoleController.show
-     * @covers ::show
      */
     public function test_not_show_roles_with_unauthorized_role_permissions(): void
     {
@@ -345,9 +311,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the show method of RoleController without any permissions.
-     *
-     * @group RoleController.show
-     * @covers ::show
      */
     public function test_not_show_roles_without_any_permission(): void
     {
@@ -367,9 +330,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the update method of RoleController with minimal permissions.
-     *
-     * @group RoleController.update
-     * @covers ::update
      */
     public function test_update_roles_with_minimal_permission(): void
     {
@@ -404,9 +364,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the update method of RoleController without permissions array.
-     *
-     * @group RoleController.update
-     * @covers ::update
      */
     public function test_not_update_roles_without_permissions_array(): void
     {
@@ -433,9 +390,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the update method of RoleController with wrong permission id.
-     *
-     * @group RoleController.update
-     * @covers ::update
      */
     public function test_not_update_roles_with_wrong_permission_id(): void
     {
@@ -469,9 +423,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the update method of RoleController with duplicate name.
-     *
-     * @group RoleController.update
-     * @covers ::update
      */
     public function test_not_update_roles_with_duplicate_name(): void
     {
@@ -502,9 +453,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the update method of RoleController with unauthorized role permissions.
-     *
-     * @group RoleController.update
-     * @covers ::update
      */
     public function test_not_update_roles_with_unauthorized_role_permissions(): void
     {
@@ -536,9 +484,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the update method of RoleController without any permissions.
-     *
-     * @group RoleController.update
-     * @covers ::update
      */
     public function test_not_update_roles_without_any_permission(): void
     {
@@ -566,9 +511,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the destroy method of RoleController with minimal permissions.
-     *
-     * @group RoleController.destroy
-     * @covers ::destroy
      */
     public function test_destroy_roles_with_minimal_permission(): void
     {
@@ -591,9 +533,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the destroy method of RoleController with wrong role id.
-     *
-     * @group RoleController.destroy
-     * @covers ::destroy
      */
     public function test_not_destroy_roles_with_wrong_role_id(): void
     {
@@ -620,9 +559,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the destroy method of RoleController with unauthorized role permissions.
-     *
-     * @group RoleController.destroy
-     * @covers ::destroy
      */
     public function test_not_destroy_roles_with_unauthorized_role_permissions(): void
     {
@@ -647,9 +583,6 @@ class RoleControllerTest extends TestCase
 
     /**
      * Test the destroy method of RoleController without any permissions.
-     *
-     * @group RoleController.destroy
-     * @covers ::destroy
      */
     public function test_not_destroy_roles_without_any_permission(): void
     {
