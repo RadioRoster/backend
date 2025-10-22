@@ -6,20 +6,17 @@ use App\Models\User;
 use App\Permissions\UsersPermissions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-/**
- * @coversDefaultClass \App\Http\Controllers\UserController
- */
+
+#[Group('UserController')]
 class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
     /**
      * Test that the index method list users with minimal permission.
-     *
-     * @group UserController.Index
-     * @covers ::index
      */
     public function test_index_users_with_minimal_permission(): void
     {
@@ -44,9 +41,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test that the index method don't list users with unauthorized user permissions.
-     *
-     * @group UserController.Index
-     * @covers ::index
      */
     public function test_not_index_users_with_unauthorized_user_permissions(): void
     {
@@ -72,9 +66,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the index method without permission.
-     *
-     * @group UserController.Index
-     * @covers ::index
      */
     public function test_not_index_users_without_any_permission(): void
     {
@@ -94,9 +85,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test that the store method creates users with minimal permission.
-     *
-     * @group UserController.Store
-     * @covers ::store
      */
     public function test_store_user_with_minimal_permission(): void
     {
@@ -135,9 +123,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the store method with unauthorized permission.
-     *
-     * @group UserController.Store
-     * @covers ::store
      */
 
     public function test_not_store_user_with_unauthorized_user_permissions(): void
@@ -177,9 +162,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the store method without permission.
-     *
-     * @group UserController.Store
-     * @covers ::store
      */
     public function test_not_store_user_without_any_permission(): void
     {
@@ -212,9 +194,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the show method for other users
-     *
-     * @group UserController.Show
-     * @covers ::show
      */
     public function test_show_other_users_with_list_permission(): void
     {
@@ -227,7 +206,7 @@ class UserControllerTest extends TestCase
         $user = User::factory()->create();
 
         // Send a GET request to the show endpoint
-        $response = $this->get('/api/v1/users/' . $user->id);
+        $response = $this->get('/api/v1/users/'.$user->id);
 
         // Assert that the response has a successful status code
         $response->assertStatus(200);
@@ -238,22 +217,19 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the show method for self.
-     *
-     * @group UserController.Show
-     * @covers ::show
      */
     public function test_show_users_self_with_show_permission(): void
     {
         $user = User::factory()->create();
 
         Sanctum::actingAs($user->givePermissionTo([
-                UsersPermissions::CAN_SHOW_USERS,
+            UsersPermissions::CAN_SHOW_USERS,
         ]));
 
         $user = User::find($user->id);
 
         // Send a GET request to the show endpoint
-        $response = $this->getJson('/api/v1/users/' . $user->id);
+        $response = $this->getJson('/api/v1/users/'.$user->id);
 
         // Assert that the response has a successful status code
         $response->assertStatus(200);
@@ -265,9 +241,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the show method for other users with self permission.
-     *
-     * @group UserController.Show
-     * @covers ::show
      */
     public function test_not_show_other_users_with_self_permission(): void
     {
@@ -280,7 +253,7 @@ class UserControllerTest extends TestCase
         $user = User::factory()->create();
 
         // Send a GET request to the show endpoint
-        $response = $this->get('/api/v1/users/' . $user->id);
+        $response = $this->get('/api/v1/users/'.$user->id);
 
         // Assert that the response has a successful status code
         $response->assertStatus(403);
@@ -291,9 +264,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the show method with unauthorized user permissions.
-     *
-     * @group UserController.Show
-     * @covers ::show
      */
     public function test_not_show_other_users_with_unauthorized_user_permissions(): void
     {
@@ -314,7 +284,7 @@ class UserControllerTest extends TestCase
             $user = User::factory()->create();
 
             // Send a GET request to the show endpoint
-            $response = $this->getJson('/api/v1/users/' . $user->id);
+            $response = $this->getJson('/api/v1/users/'.$user->id);
 
             // Assert that the response has a unauthorized status code
             $response->assertStatus(403);
@@ -326,9 +296,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the show method without permission.
-     *
-     * @group UserController.Show
-     * @covers ::show
      */
     public function test_not_show_users_without_any_permission(): void
     {
@@ -339,7 +306,7 @@ class UserControllerTest extends TestCase
         $user = User::factory()->create();
 
         // Send a GET request to the show endpoint
-        $response = $this->getJson('/api/v1/users/' . $user->id);
+        $response = $this->getJson('/api/v1/users/'.$user->id);
 
         // Assert that the response has a unauthorized status code
         $response->assertStatus(403);
@@ -350,14 +317,11 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the update method for self.
-     *
-     * @group UserController.Update
-     * @covers ::update
      */
     public function test_update_users_self_with_self_permission(): void
     {
         $user = User::factory()->create()->givePermissionTo([
-                UsersPermissions::CAN_UPDATE_USERS_SELF,
+            UsersPermissions::CAN_UPDATE_USERS_SELF,
         ]);
 
         Sanctum::actingAs($user);
@@ -368,7 +332,7 @@ class UserControllerTest extends TestCase
         ];
 
         // Send a PUT request to the update endpoint
-        $response = $this->putJson('/api/v1/users/' . $user->id, $userData);
+        $response = $this->putJson('/api/v1/users/'.$user->id, $userData);
 
         // Assert that the response has a successful status code
         $response->assertStatus(200);
@@ -385,9 +349,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the update method for other users with self permission.
-     *
-     * @group UserController.Update
-     * @covers ::update
      */
     public function test_update_other_users_with_update_permission(): void
     {
@@ -405,7 +366,7 @@ class UserControllerTest extends TestCase
         ];
 
         // Send a PATCH request to the update endpoint
-        $response = $this->putJson('/api/v1/users/' . $user->id, $userData);
+        $response = $this->putJson('/api/v1/users/'.$user->id, $userData);
 
         // Assert that the response has a unauthorized status code
         $response->assertStatus(200);
@@ -423,9 +384,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the update method for other users with self permission.
-     *
-     * @group UserController.Update
-     * @covers ::update
      */
     public function test_not_update_other_users_with_self_permission(): void
     {
@@ -443,7 +401,7 @@ class UserControllerTest extends TestCase
         ];
 
         // Send a PATCH request to the update endpoint
-        $response = $this->putJson('/api/v1/users/' . $user->id, $userData);
+        $response = $this->putJson("/api/v1/users/{$user->id}", $userData);
 
         // Assert that the response has a unauthorized status code
         $response->assertStatus(403);
@@ -481,7 +439,7 @@ class UserControllerTest extends TestCase
         ];
 
         // Send a PATCH request to the update endpoint
-        $response = $this->putJson('/api/v1/users/' . $user->id, $userData);
+        $response = $this->putJson('/api/v1/users/'.$user->id, $userData);
 
         // Assert that the response has a unauthorized status code
         $response->assertStatus(403);
@@ -499,9 +457,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the update method without any permission.
-     *
-     * @group UserController.Update
-     * @covers ::update
      */
     public function test_not_update_users_without_any_permission(): void
     {
@@ -517,7 +472,7 @@ class UserControllerTest extends TestCase
         ];
 
         // Send a PATCH request to the update endpoint
-        $response = $this->putJson('/api/v1/users/' . $user->id, $userData);
+        $response = $this->putJson('/api/v1/users/'.$user->id, $userData);
 
         // Assert that the response has a unauthorized status code
         $response->assertStatus(403);
@@ -535,9 +490,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the destroy method with minimal permission.
-     *
-     * @group UserController.Destroy
-     * @covers ::destroy
      */
     public function test_destroy_users_with_minimal_permission(): void
     {
@@ -550,7 +502,7 @@ class UserControllerTest extends TestCase
         $user = User::factory()->create();
 
         // Send a DELETE request to the destroy endpoint
-        $response = $this->delete('/api/v1/users/' . $user->id);
+        $response = $this->delete('/api/v1/users/'.$user->id);
 
         // Assert that the response has a successful status code
         $response->assertStatus(200);
@@ -561,9 +513,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the destroy method with unauthorized user permissions.
-     *
-     * @group UserController.Destroy
-     * @covers ::destroy
      */
     public function test_not_destroy_users_with_unauthorized_user_permissions(): void
     {
@@ -580,7 +529,7 @@ class UserControllerTest extends TestCase
         $user = User::factory()->create();
 
         // Send a DELETE request to the destroy endpoint
-        $response = $this->deleteJson('/api/v1/users/' . $user->id);
+        $response = $this->deleteJson('/api/v1/users/'.$user->id);
 
         // Assert that the response has a successful status code
         $response->assertStatus(403);
@@ -592,9 +541,6 @@ class UserControllerTest extends TestCase
 
     /**
      * Test the destroy method without permission.
-     *
-     * @group UserController.Destroy
-     * @covers ::destroy
      */
     public function test_users_destroy_without_any_permission(): void
     {
@@ -605,7 +551,7 @@ class UserControllerTest extends TestCase
         $user = User::factory()->create();
 
         // Send a DELETE request to the destroy endpoint
-        $response = $this->deleteJson('/api/v1/users/' . $user->id);
+        $response = $this->deleteJson('/api/v1/users/'.$user->id);
 
         // Assert that the response has a successful status code
         $response->assertStatus(403);

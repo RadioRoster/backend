@@ -7,15 +7,16 @@ use App\Permissions\RolesPermissions;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Role;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class RoleController extends Controller
+class RoleController extends Controller implements HasMiddleware
 {
     /**
-     * RoleController constructor.
-     *
-     * @codeCoverageIgnore
+     * Return the middleware configurations for the controller.
      */
-    public function __construct()
+    public static function middleware(): array
     {
         /**
          * Permissions:
@@ -25,10 +26,12 @@ class RoleController extends Controller
          * - update: update-roles
          * - destroy: delete-roles
          */
-        $this->middleware('permission:'.RolesPermissions::CAN_SHOW_ROLES)->only(['index', 'show']);
-        $this->middleware('permission:'.RolesPermissions::CAN_CREATE_ROLES)->only(['store']);
-        $this->middleware('permission:'.RolesPermissions::CAN_UPDATE_ROLES)->only(['update']);
-        $this->middleware('permission:'.RolesPermissions::CAN_DELETE_ROLES)->only(['destroy']);
+        return [
+            new Middleware(PermissionMiddleware::using(RolesPermissions::CAN_SHOW_ROLES), only: ['index', 'show']),
+            new Middleware(PermissionMiddleware::using(RolesPermissions::CAN_CREATE_ROLES), only: ['store']),
+            new Middleware(PermissionMiddleware::using(RolesPermissions::CAN_UPDATE_ROLES), only: ['update']),
+            new Middleware(PermissionMiddleware::using(RolesPermissions::CAN_DELETE_ROLES), only: ['destroy']),
+        ];
     }
 
     /**
@@ -92,8 +95,8 @@ class RoleController extends Controller
     public function update(Request $request, Role $role)
     {
         $validated = $request->validate([
-            'name'          => 'required|string|unique:roles,name,'.$role->id,
-            'permissions'   => 'present|array',
+            'name' => 'required|string|unique:roles,name,'.$role->id,
+            'permissions' => 'present|array',
             'permissions.*' => 'sometimes|int|exists:permissions,id',
         ]);
 

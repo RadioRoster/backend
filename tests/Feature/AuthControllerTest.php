@@ -5,11 +5,9 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\Response;
 use Laravel\Sanctum\Sanctum;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
-
-use function Psy\debug;
 
 class AuthControllerTest extends TestCase
 {
@@ -77,6 +75,27 @@ class AuthControllerTest extends TestCase
      * @return void
      */
     public function test_logout(): void
+    {
+
+        Sanctum::actingAs(
+            User::factory()->create(),
+            ['*']
+        );
+
+        $response = $this->postJson('/api/v1/logout');
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJson([
+                'data' => 'User logged out successfully',
+            ]);
+    }
+
+    /**
+     * Test logout.
+     *
+     * @return void
+     */
+    public function test_logout_without_user(): void
     {
 
         Sanctum::actingAs(

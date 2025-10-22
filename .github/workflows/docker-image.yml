@@ -14,12 +14,8 @@ env:
 
 jobs:
   build-and-push-image:
-    name: Build and push Docker image for PHP ${{ matrix.php-version }}
+    name: Build and push Docker image for PHP 8.4
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        php-version: ["8.1", "8.2", "8.3"]
 
     permissions:
       contents: read
@@ -41,8 +37,6 @@ jobs:
         uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f # v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          flavor: |
-            suffix=-php${{ matrix.php-version }}
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
@@ -56,5 +50,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            PHP_VERSION=${{ matrix.php-version }}-apache

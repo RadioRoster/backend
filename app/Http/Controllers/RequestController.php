@@ -8,8 +8,11 @@ use App\Models\Request as WishRequest;
 use App\Permissions\RequestPermissions;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class RequestController extends Controller
+class RequestController extends Controller implements HasMiddleware
 {
 
 
@@ -21,10 +24,12 @@ class RequestController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public static function middleware(): array
     {
-        $this->middleware('permission:' . RequestPermissions::CAN_VIEW_REQUESTS)->only(['index', 'show']);
-        $this->middleware('permission:' . RequestPermissions::CAN_DELETE_REQUESTS)->only(['destroy']);
+        return [
+            new Middleware(PermissionMiddleware::using(RequestPermissions::CAN_VIEW_REQUESTS), only: ['index', 'show']),
+            new Middleware(PermissionMiddleware::using(RequestPermissions::CAN_DELETE_REQUESTS), only: ['destroy']),
+        ];
     }
 
     /**
@@ -87,7 +92,7 @@ class RequestController extends Controller
      */
     public function destroy(WishRequest $request)
     {
-        if($request->delete()) {
+        if ($request->delete()) {
             return new ApiSuccessResponse('', status: Response::HTTP_NO_CONTENT);
         } else {
             // @codeCoverageIgnoreStart

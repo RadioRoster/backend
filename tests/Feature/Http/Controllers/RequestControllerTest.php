@@ -10,17 +10,12 @@ use Illuminate\Http\Response;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-/**
- * @coversDefaultClass \App\Http\Controllers\RequestController
- */
 class RequestControllerTest extends TestCase
 {
     use RefreshDatabase;
 
     /**
      * Test retrieving a paginated list of requests.
-     *
-     * @covers ::index
      */
     public function test_list_requests(): void
     {
@@ -73,8 +68,6 @@ class RequestControllerTest extends TestCase
 
     /**
      * Test retrieving a paginated list of requests with sorting.
-     *
-     * @covers ::index
      */
     public function test_list_requests_with_sorting(): void
     {
@@ -128,9 +121,7 @@ class RequestControllerTest extends TestCase
     }
 
     /**
-     * Test storing a newly created request.
-     *
-     * @covers ::store
+     * Test storing a newly created request
      */
     public function test_store_request(): void
     {
@@ -156,8 +147,6 @@ class RequestControllerTest extends TestCase
 
     /**
      * Test displaying a specific request.
-     *
-     * @covers ::show
      */
     public function test_show_single_request(): void
     {
@@ -180,8 +169,6 @@ class RequestControllerTest extends TestCase
 
     /**
      * Test deleting a specific request.
-     *
-     * @covers ::destroy
      */
     public function test_destroy(): void
     {

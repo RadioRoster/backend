@@ -3,10 +3,12 @@
 namespace Tests\Feature\Http\Middleware;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class JsonOnlyMiddlewareTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * Test that non-JSON requests are rejected.
      */

@@ -1,5 +1,5 @@
 ARG COMPOSER_VERSION=lts
-ARG PHP_VERSION=8.1-apache
+ARG PHP_VERSION=8.4-apache
 
 # Stage 1: Build
 FROM composer:${COMPOSER_VERSION} as build
