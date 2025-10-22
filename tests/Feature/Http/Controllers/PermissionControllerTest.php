@@ -3,11 +3,13 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class PermissionControllerTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * A basic feature test example.
      */

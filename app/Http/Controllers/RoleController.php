@@ -7,17 +7,18 @@ use App\Permissions\RolesPermissions;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Role;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class RoleController extends Controller
+class RoleController extends Controller implements HasMiddleware
 {
     /**
      * RoleController constructor.
      *
      * @codeCoverageIgnore
      */
-    public function middleware(): array
+    public static function middleware(): array
     {
         /**
          * Permissions:
