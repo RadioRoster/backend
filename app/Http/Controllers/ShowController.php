@@ -19,8 +19,6 @@ class ShowController extends Controller implements HasMiddleware
 
     /**
      * Constructor method for the ShowController class.
-     *
-     * @param ShowService $showService
      */
     public function __construct(ShowService $showService)
     {
@@ -32,8 +30,6 @@ class ShowController extends Controller implements HasMiddleware
      * Applies middleware permissions for specific controller actions.
      *
      * @codeCoverageIgnore
-     *
-     * @return array
      */
     public static function middleware(): array
     {
@@ -47,9 +43,6 @@ class ShowController extends Controller implements HasMiddleware
 
     /**
      * Display a listing of the resource.
-     *
-     * @param Request $request
-     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function index(Request $request): \Illuminate\Pagination\LengthAwarePaginator
     {
@@ -72,7 +65,6 @@ class ShowController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
      * @return ApiSuccessResponse|ApiErrorResponse
      */
     public function store(Request $request)
@@ -92,7 +84,7 @@ class ShowController extends Controller implements HasMiddleware
         if (isset($validated['start_date']) && isset($validated['end_date'])) {
             if (strtotime($validated['end_date']) < strtotime($validated['start_date'])) {
                 return new ApiErrorResponse([
-                    'end_date' => ['The end date must be after or equal to the start date.']
+                    'end_date' => ['The end date must be after or equal to the start date.'],
                 ], status: Response::HTTP_UNPROCESSABLE_ENTITY);
             }
         }
@@ -111,7 +103,6 @@ class ShowController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      *
-     * @param Show $show
      * @return ApiSuccessResponse|ApiErrorResponse
      */
     public function show(Show $show)
@@ -122,8 +113,6 @@ class ShowController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param Show $show
      * @return ApiSuccessResponse|ApiErrorResponse
      */
     public function update(Request $request, Show $show)
@@ -142,7 +131,7 @@ class ShowController extends Controller implements HasMiddleware
         // Additional validation: end_date must be after start_date if both are provided
         $startDate = $request->filled('start_date') ? $request->start_date : $show->start_date;
         $endDate = $request->filled('end_date') ? $request->end_date : $show->end_date;
-        
+
         if ($startDate && $endDate && strtotime($endDate) < strtotime($startDate)) {
             return new ApiErrorResponse('The end date must be after or equal to the start date.', status: Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -161,7 +150,6 @@ class ShowController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      *
-     * @param Show $show
      * @return ApiSuccessResponse|ApiErrorResponse
      */
     public function destroy(Show $show)
@@ -175,4 +163,3 @@ class ShowController extends Controller implements HasMiddleware
         }
     }
 }
-

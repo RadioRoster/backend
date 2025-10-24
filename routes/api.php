@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,10 +19,10 @@ use Illuminate\Support\Facades\Route;
  * @group v1
  */
 Route::group(['prefix' => 'v1'], function () {
-    require __DIR__ . '/api/v1/auth.php';
-    require __DIR__ . '/api/v1/user.php';
-    require __DIR__ . '/api/v1/role.php';
-    require __DIR__ . '/api/v1/request.php';
-    require __DIR__ . '/api/v1/permission.php';
-    require __DIR__ . '/api/v1/show.php';
+    require __DIR__.'/api/v1/auth.php';
+    require __DIR__.'/api/v1/user.php';
+    require __DIR__.'/api/v1/role.php';
+    require __DIR__.'/api/v1/request.php';
+    require __DIR__.'/api/v1/permission.php';
+    require __DIR__.'/api/v1/show.php';
 });

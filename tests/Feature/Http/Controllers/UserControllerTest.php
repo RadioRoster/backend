@@ -9,7 +9,6 @@ use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-
 #[Group('UserController')]
 class UserControllerTest extends TestCase
 {
@@ -25,7 +24,7 @@ class UserControllerTest extends TestCase
 
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                UsersPermissions::CAN_LIST_USERS
+                UsersPermissions::CAN_LIST_USERS,
             ])
         );
 
@@ -124,7 +123,6 @@ class UserControllerTest extends TestCase
     /**
      * Test the store method with unauthorized permission.
      */
-
     public function test_not_store_user_with_unauthorized_user_permissions(): void
     {
         Sanctum::actingAs(
@@ -237,7 +235,6 @@ class UserControllerTest extends TestCase
         // Assert that the response contains the user data
         $response->assertJsonFragment($user->toArray());
     }
-
 
     /**
      * Test the show method for other users with self permission.
@@ -389,7 +386,7 @@ class UserControllerTest extends TestCase
     {
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                UsersPermissions::CAN_UPDATE_USERS_SELF
+                UsersPermissions::CAN_UPDATE_USERS_SELF,
             ])
         );
 
@@ -537,7 +534,6 @@ class UserControllerTest extends TestCase
         // Assert that the response contains the error message
         $response->assertJsonFragment(['message' => 'User does not have the right permissions.']);
     }
-
 
     /**
      * Test the destroy method without permission.

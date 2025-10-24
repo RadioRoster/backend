@@ -170,7 +170,7 @@ class ShowControllerTest extends TestCase
             ShowPermissions::CAN_VIEW_SHOWS,
         ]));
 
-        $response = $this->getJson('/api/v1/shows/' . $show->id);
+        $response = $this->getJson('/api/v1/shows/'.$show->id);
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonFragment([
@@ -196,7 +196,7 @@ class ShowControllerTest extends TestCase
             ShowPermissions::CAN_UPDATE_SHOWS,
         ]));
 
-        $response = $this->putJson('/api/v1/shows/' . $show->id, $updateData);
+        $response = $this->putJson('/api/v1/shows/'.$show->id, $updateData);
 
         $response->assertStatus(Response::HTTP_OK);
 
@@ -223,7 +223,7 @@ class ShowControllerTest extends TestCase
             ShowPermissions::CAN_DELETE_SHOWS,
         ]));
 
-        $response = $this->delete('/api/v1/shows/' . $show->id);
+        $response = $this->delete('/api/v1/shows/'.$show->id);
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertDatabaseMissing('shows', ['id' => $show->id]);
@@ -255,4 +255,3 @@ class ShowControllerTest extends TestCase
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }
-
