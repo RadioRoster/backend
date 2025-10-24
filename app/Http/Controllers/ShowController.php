@@ -26,7 +26,7 @@ class ShowController extends Controller implements HasMiddleware
     }
 
     /**
-     * Constructor method for the ShowController class.
+     * Get the middleware that should be assigned to the controller.
      * Applies middleware permissions for specific controller actions.
      *
      * @codeCoverageIgnore
