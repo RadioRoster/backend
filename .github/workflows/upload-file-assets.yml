@@ -36,6 +36,6 @@ jobs:
         run: zip -r -q -9 -X radioroster_${{ github.ref_name }}-php${{ matrix.php-versions }}.zip .
 
       - name: Upload zip file as asset
-        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
         with:
           files: radioroster_${{ github.ref_name }}-php${{ matrix.php-versions }}.zip
