@@ -9,7 +9,6 @@
         ":timezone(Europe/Berlin)",
         ":pinAllExceptPeerDependencies",
         ":rebaseStalePrs",
-        ":maintainLockFilesWeekly",
         ":label(Scope: Deps)"
     ],
     "baseBranchPatterns": [
@@ -24,12 +23,12 @@
     "packageRules": [
         {
             "description": "Allow ranges for PHP",
-            "matchPackageNames": "php",
-            "rangeStrategy": "auto"
+            "matchPackageNames": ["php"],
+            "rangeStrategy": "widen"
         },
         {
             "description": "Require approval for minor updates on PHP",
-            "matchPackageNames": "php",
+            "matchPackageNames": ["php"],
             "matchUpdateTypes": [
                 "minor"
             ],
@@ -37,9 +36,17 @@
         },
         {
             "description": "Disallow major updates for PHP",
-            "matchPackageNames": "php",
+            "matchPackageNames": ["php"],
             "matchUpdateTypes": [
                 "major"
+            ],
+            "enabled": false
+        },
+        {
+            "description": "Disable specific dependency updates",
+            "matchPackageNames": [
+                "mariadb",
+                "composer"
             ],
             "enabled": false
         }
