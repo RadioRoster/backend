@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Responses\ApiSuccessResponse;
+use App\Models\Role;
 use App\Permissions\RolesPermissions;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Models\Role;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
@@ -54,7 +54,6 @@ class RoleController extends Controller implements HasMiddleware
     /**
      * Store a newly created role in the database.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \App\Http\Responses\ApiSuccessResponse
      */
     public function store(Request $request)
@@ -82,13 +81,13 @@ class RoleController extends Controller implements HasMiddleware
     public function show(Role $role)
     {
         $role['permissions'] = $role->permissions()->get(['id', 'name'])->makeHidden(['pivot'])->toArray();
+
         return new ApiSuccessResponse($role);
     }
 
     /**
      * Update a role.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Spatie\Permission\Models\Role  $role
      * @return \App\Http\Responses\ApiSuccessResponse
      */
@@ -111,13 +110,13 @@ class RoleController extends Controller implements HasMiddleware
     /**
      * Delete a role.
      *
-     * @param   \Spatie\Permission\Models\Role $role
-     * @return  \App\Http\Responses\ApiSuccessResponse
+     * @param  \Spatie\Permission\Models\Role  $role
+     * @return \App\Http\Responses\ApiSuccessResponse
      */
     public function destroy(Role $role)
     {
         $role->delete();
 
-        return new ApiSuccessResponse("Role successfully deleted.");
+        return new ApiSuccessResponse('Role successfully deleted.');
     }
 }

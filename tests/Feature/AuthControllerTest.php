@@ -15,8 +15,6 @@ class AuthControllerTest extends TestCase
 
     /**
      * Test login with valid credentials.
-     *
-     * @return void
      */
     public function test_login_with_valid_credentials(): void
     {
@@ -51,8 +49,6 @@ class AuthControllerTest extends TestCase
 
     /**
      * Test login with invalid credentials.
-     *
-     * @return void
      */
     public function test_login_with_invalid_credentials(): void
     {
@@ -71,8 +67,6 @@ class AuthControllerTest extends TestCase
 
     /**
      * Test logout.
-     *
-     * @return void
      */
     public function test_logout(): void
     {
@@ -92,8 +86,6 @@ class AuthControllerTest extends TestCase
 
     /**
      * Test logout.
-     *
-     * @return void
      */
     public function test_logout_without_user(): void
     {

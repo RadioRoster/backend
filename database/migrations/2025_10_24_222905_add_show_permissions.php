@@ -12,11 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Permission::create([
-            'name' => 'requests.view',
+            'name' => 'shows.view',
             'guard_name' => 'web',
         ]);
         Permission::create([
-            'name' => 'requests.delete',
+            'name' => 'shows.create',
+            'guard_name' => 'web',
+        ]);
+        Permission::create([
+            'name' => 'shows.update',
+            'guard_name' => 'web',
+        ]);
+        Permission::create([
+            'name' => 'shows.delete',
             'guard_name' => 'web',
         ]);
     }
@@ -27,8 +35,10 @@ return new class extends Migration
     public function down(): void
     {
         DB::table('permissions')->whereIn('name', [
-            'requests.view',
-            'requests.delete',
+            'shows.view',
+            'shows.create',
+            'shows.update',
+            'shows.delete',
         ])->delete();
     }
 };

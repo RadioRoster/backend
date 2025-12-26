@@ -179,7 +179,7 @@ class RequestControllerTest extends TestCase
         ])
         );
 
-        $response = $this->delete('/api/v1/requests/' . $request->get(1)->id);
+        $response = $this->delete('/api/v1/requests/'.$request->get(1)->id);
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertDatabaseMissing('requests', ['id' => $request->get(1)->id]);

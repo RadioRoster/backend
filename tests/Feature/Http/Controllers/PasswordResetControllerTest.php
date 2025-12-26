@@ -48,7 +48,7 @@ class PasswordResetControllerTest extends TestCase
         $user = User::factory()->create();
         $token = Password::createToken($user);
 
-        $response = $this->postJson('/api/v1/reset_password/' . $token, [
+        $response = $this->postJson('/api/v1/reset_password/'.$token, [
             'email' => $user->email,
             'password' => 'newpassword',
             'password_confirmation' => 'newpassword',
@@ -83,7 +83,7 @@ class PasswordResetControllerTest extends TestCase
         $user = User::factory()->create();
         $token = Password::createToken($user);
 
-        $response = $this->postJson('/api/v1/reset_password/' . $token, [
+        $response = $this->postJson('/api/v1/reset_password/'.$token, [
             'email' => 'invalid@example.com',
             'password' => 'newpassword',
             'password_confirmation' => 'newpassword',
@@ -100,7 +100,7 @@ class PasswordResetControllerTest extends TestCase
         $user = User::factory()->create();
         $token = Password::createToken($user);
 
-        $response = $this->postJson('/api/v1/reset_password/' . $token, [
+        $response = $this->postJson('/api/v1/reset_password/'.$token, [
             'email' => $user->email,
             'password' => 'newpassword',
             'password_confirmation' => 'mismatchedpassword',
