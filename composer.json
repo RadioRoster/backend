@@ -13,7 +13,7 @@
         "roster"
     ],
     "license": "AGPL-3.0",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "require": {
         "php": "~8.2 | ~8.3 | ~8.4",
         "guzzlehttp/guzzle": "7.10.0",
