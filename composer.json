@@ -17,7 +17,7 @@
     "require": {
         "php": "~8.2 | ~8.3 | ~8.4",
         "guzzlehttp/guzzle": "7.8.2",
-        "laravel/framework": "12.20.0",
+        "laravel/framework": "12.43.1",
         "laravel/sanctum": "4.2.1",
         "laravel/tinker": "2.10.1",
         "spatie/laravel-permission": "6.24.0"
