@@ -10,6 +10,7 @@ use Tests\TestCase;
 class PermissionControllerTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * A basic feature test example.
      */
@@ -48,7 +49,7 @@ class PermissionControllerTest extends TestCase
             'per_page',
             'prev_page_url',
             'to',
-            'total'
+            'total',
         ]);
     }
 
@@ -87,7 +88,7 @@ class PermissionControllerTest extends TestCase
             'per_page',
             'prev_page_url',
             'to',
-            'total'
+            'total',
         ]);
     }
 
@@ -126,7 +127,7 @@ class PermissionControllerTest extends TestCase
             'per_page',
             'prev_page_url',
             'to',
-            'total'
+            'total',
         ]);
     }
 
@@ -165,7 +166,7 @@ class PermissionControllerTest extends TestCase
             'per_page',
             'prev_page_url',
             'to',
-            'total'
+            'total',
         ]);
     }
 
@@ -187,7 +188,7 @@ class PermissionControllerTest extends TestCase
                 'updated_at',
             ],
             'status',
-            'timestamp'
+            'timestamp',
         ]);
     }
 }

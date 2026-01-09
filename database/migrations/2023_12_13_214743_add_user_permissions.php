@@ -1,7 +1,5 @@
 <?php
 
-use App\Permissions\UsersPermissions;
-use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;

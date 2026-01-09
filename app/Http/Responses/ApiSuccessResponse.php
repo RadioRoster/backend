@@ -12,18 +12,21 @@ class ApiSuccessResponse implements Responsable
      *
      * This class is responsible for constructing a successful API response
      * with the provided data, status code, and headers.
+     *
      * @codeCoverageIgnore
      */
     public function __construct(
         private $data,
         private int $status = Response::HTTP_OK,
-        private array $headers = ["Content-Type" => "application/json", "Accept" => "application/json"]
-    ) {}
+        private array $headers = ['Content-Type' => 'application/json', 'Accept' => 'application/json']
+    ) {
+    }
 
     /**
      * Convert the response instance to a JSON response.
      *
      * @codeCoverageIgnore
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Symfony\Component\HttpFoundation\Response|void
      */
@@ -39,5 +42,4 @@ class ApiSuccessResponse implements Responsable
             $this->headers
         );
     }
-
 }

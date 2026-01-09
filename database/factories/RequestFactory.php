@@ -18,7 +18,7 @@ class RequestFactory extends Factory
     {
         return [
             'name' => $this->faker->name,
-            'message' => $this->faker->paragraph()
+            'message' => $this->faker->paragraph(),
         ];
     }
 }

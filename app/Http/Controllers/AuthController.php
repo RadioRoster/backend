@@ -5,26 +5,24 @@ namespace App\Http\Controllers;
 use App\Http\Responses\ApiSuccessResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
     /**
      * Handle user login.
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
         $credentials = $request->validate([
             'email' => ['required', 'string', 'email'],
-            'password' => ['required']
+            'password' => ['required'],
         ]);
 
-        if (!auth()->attempt($credentials)) {
+        if (! auth()->attempt($credentials)) {
             return response()->json([
-                'message' => 'Invalid login credentials'
+                'message' => 'Invalid login credentials',
             ], Response::HTTP_UNAUTHORIZED);
         }
 
@@ -34,14 +32,13 @@ class AuthController extends Controller
 
         return response()->json([
             'user' => $user,
-            'access_token' => $token
+            'access_token' => $token,
         ], Response::HTTP_OK);
     }
 
     /**
      * Logout the user.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \App\Http\Responses\ApiSuccessResponse
      */
     public function logout(Request $request)

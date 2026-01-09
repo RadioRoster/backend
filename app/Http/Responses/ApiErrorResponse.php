@@ -20,13 +20,15 @@ class ApiErrorResponse implements Responsable
         private $message,
         private ?Throwable $exception = null,
         private int $status = Response::HTTP_INTERNAL_SERVER_ERROR,
-        private array $headers = ["Content-Type" => "application/json", "Accept" => "application/json"]
-    ) {}
+        private array $headers = ['Content-Type' => 'application/json', 'Accept' => 'application/json']
+    ) {
+    }
 
     /**
      * Convert the exception to a JSON response.
      *
      * @codeCoverageIgnore
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -34,12 +36,12 @@ class ApiErrorResponse implements Responsable
     {
         $response = ['message' => $this->message];
 
-        if (!is_null($this->exception) && config('app.debug')) {
+        if (! is_null($this->exception) && config('app.debug')) {
             $response['debug'] = [
-                'message'   => $this->exception->getMessage(),
-                'file'      => $this->exception->getFile(),
-                'line'      => $this->exception->getLine(),
-                'trace'     => $this->exception->getTraceAsString(),
+                'message' => $this->exception->getMessage(),
+                'file' => $this->exception->getFile(),
+                'line' => $this->exception->getLine(),
+                'trace' => $this->exception->getTraceAsString(),
             ];
         }
 
@@ -49,5 +51,4 @@ class ApiErrorResponse implements Responsable
             'timestamp' => now()->toDateTimeString(),
         ], $this->status, $this->headers);
     }
-
 }

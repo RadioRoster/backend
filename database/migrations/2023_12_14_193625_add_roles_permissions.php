@@ -1,6 +1,5 @@
 <?php
 
-use App\Permissions\RolesPermissions;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;

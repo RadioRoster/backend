@@ -14,8 +14,6 @@ use Spatie\Permission\Middleware\PermissionMiddleware;
 
 class RequestController extends Controller implements HasMiddleware
 {
-
-
     /**
      * Constructor method for the RequestController class.
      * Applies middleware permissions for specific controller actions.
@@ -34,9 +32,6 @@ class RequestController extends Controller implements HasMiddleware
 
     /**
      * Retrieve a paginated list of requests.
-     *
-     * @param  Request  $httpRequest
-     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function index(Request $httpRequest): \Illuminate\Pagination\LengthAwarePaginator
     {

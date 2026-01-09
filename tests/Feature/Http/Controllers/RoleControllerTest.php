@@ -2,13 +2,13 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Permissions\RolesPermissions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
-use App\Models\Role;
 use App\Permissions\UsersPermissions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Group;
 use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
@@ -27,7 +27,7 @@ class RoleControllerTest extends TestCase
 
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                RolesPermissions::CAN_SHOW_ROLES
+                RolesPermissions::CAN_SHOW_ROLES,
             ]),
         );
 
@@ -94,7 +94,7 @@ class RoleControllerTest extends TestCase
     {
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                RolesPermissions::CAN_CREATE_ROLES
+                RolesPermissions::CAN_CREATE_ROLES,
             ]),
         );
 
@@ -132,7 +132,7 @@ class RoleControllerTest extends TestCase
     {
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                RolesPermissions::CAN_CREATE_ROLES
+                RolesPermissions::CAN_CREATE_ROLES,
             ]),
         );
 
@@ -165,7 +165,7 @@ class RoleControllerTest extends TestCase
 
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                RolesPermissions::CAN_CREATE_ROLES
+                RolesPermissions::CAN_CREATE_ROLES,
             ]),
         );
 
@@ -249,11 +249,11 @@ class RoleControllerTest extends TestCase
 
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                RolesPermissions::CAN_SHOW_ROLES
+                RolesPermissions::CAN_SHOW_ROLES,
             ]),
         );
 
-        $response = $this->getJson('/api/v1/roles/' . $role->id);
+        $response = $this->getJson('/api/v1/roles/'.$role->id);
 
         $role['permissions'] = $role->permissions()->get(['id', 'name'])->makeHidden(['pivot'])->toArray();
 
@@ -271,7 +271,7 @@ class RoleControllerTest extends TestCase
 
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                RolesPermissions::CAN_SHOW_ROLES
+                RolesPermissions::CAN_SHOW_ROLES,
             ]),
         );
 
@@ -279,11 +279,11 @@ class RoleControllerTest extends TestCase
             $randRoleId = rand(0, 999);
         } while (DB::table('roles')->where('id', $randRoleId)->exists());
 
-        $response = $this->getJson('/api/v1/roles/' . $randRoleId);
+        $response = $this->getJson('/api/v1/roles/'.$randRoleId);
 
         $response
             ->assertStatus(404)
-            ->assertJsonFragment(['message' => 'No query results for model [App\\Models\\Role] ' . $randRoleId]);
+            ->assertJsonFragment(['message' => 'No query results for model [App\\Models\\Role] '.$randRoleId]);
     }
 
     /**
@@ -302,7 +302,7 @@ class RoleControllerTest extends TestCase
             ]),
         );
 
-        $response = $this->getJson('/api/v1/roles/' . $role->id);
+        $response = $this->getJson('/api/v1/roles/'.$role->id);
 
         $response
             ->assertStatus(403)
@@ -321,7 +321,7 @@ class RoleControllerTest extends TestCase
             User::factory()->create(),
         );
 
-        $response = $this->getJson('/api/v1/roles/' . $role->id);
+        $response = $this->getJson('/api/v1/roles/'.$role->id);
 
         $response
             ->assertStatus(403)
@@ -337,7 +337,7 @@ class RoleControllerTest extends TestCase
 
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                RolesPermissions::CAN_UPDATE_ROLES
+                RolesPermissions::CAN_UPDATE_ROLES,
             ]),
         );
 
@@ -348,11 +348,9 @@ class RoleControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->putJson('/api/v1/roles/' . $role->id, $data);
+        $response = $this->putJson('/api/v1/roles/'.$role->id, $data);
 
-
-
-        $this->assertDatabaseHas('roles', ['id'=> $role->id, 'name' => 'Updated Role']);
+        $this->assertDatabaseHas('roles', ['id' => $role->id, 'name' => 'Updated Role']);
 
         $updatedRole = Role::findById($role->id, 'web');
         $updatedRole['permissions'] = $updatedRole->permissions()->get(['id', 'name'])->makeHidden(['pivot'])->toArray();
@@ -371,7 +369,7 @@ class RoleControllerTest extends TestCase
 
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                RolesPermissions::CAN_UPDATE_ROLES
+                RolesPermissions::CAN_UPDATE_ROLES,
             ]),
         );
 
@@ -379,9 +377,9 @@ class RoleControllerTest extends TestCase
             'name' => 'Updated Role',
         ];
 
-        $response = $this->putJson('/api/v1/roles/' . $role->id, $data);
+        $response = $this->putJson('/api/v1/roles/'.$role->id, $data);
 
-        $this->assertDatabaseMissing('roles', ['id'=> $role->id, 'name' => 'Updated Role']);
+        $this->assertDatabaseMissing('roles', ['id' => $role->id, 'name' => 'Updated Role']);
 
         $response
             ->assertStatus(422)
@@ -397,7 +395,7 @@ class RoleControllerTest extends TestCase
 
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                RolesPermissions::CAN_UPDATE_ROLES
+                RolesPermissions::CAN_UPDATE_ROLES,
             ]),
         );
 
@@ -412,9 +410,9 @@ class RoleControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->putJson('/api/v1/roles/' . $role->id, $data);
+        $response = $this->putJson('/api/v1/roles/'.$role->id, $data);
 
-        $this->assertDatabaseMissing('roles', ['id'=> $role->id, 'name' => 'Updated Role']);
+        $this->assertDatabaseMissing('roles', ['id' => $role->id, 'name' => 'Updated Role']);
 
         $response
             ->assertStatus(422)
@@ -431,7 +429,7 @@ class RoleControllerTest extends TestCase
 
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                RolesPermissions::CAN_UPDATE_ROLES
+                RolesPermissions::CAN_UPDATE_ROLES,
             ]),
         );
 
@@ -442,7 +440,7 @@ class RoleControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->putJson('/api/v1/roles/' . $roleTwo->id, $data);
+        $response = $this->putJson('/api/v1/roles/'.$roleTwo->id, $data);
 
         $this->assertDatabaseCount('roles', 2);
 
@@ -473,9 +471,9 @@ class RoleControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->putJson('/api/v1/roles/' . $role->id, $data);
+        $response = $this->putJson('/api/v1/roles/'.$role->id, $data);
 
-        $this->assertDatabaseMissing('roles', ['id'=> $role->id, 'name' => 'Updated Role']);
+        $this->assertDatabaseMissing('roles', ['id' => $role->id, 'name' => 'Updated Role']);
 
         $response
             ->assertStatus(403)
@@ -500,9 +498,9 @@ class RoleControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->putJson('/api/v1/roles/' . $role->id, $data);
+        $response = $this->putJson('/api/v1/roles/'.$role->id, $data);
 
-        $this->assertDatabaseMissing('roles', ['id'=> $role->id, 'name' => 'Updated Role']);
+        $this->assertDatabaseMissing('roles', ['id' => $role->id, 'name' => 'Updated Role']);
 
         $response
             ->assertStatus(403)
@@ -518,13 +516,13 @@ class RoleControllerTest extends TestCase
 
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                RolesPermissions::CAN_DELETE_ROLES
+                RolesPermissions::CAN_DELETE_ROLES,
             ]),
         );
 
-        $response = $this->deleteJson('/api/v1/roles/' . $role->id);
+        $response = $this->deleteJson('/api/v1/roles/'.$role->id);
 
-        $this->assertDatabaseMissing('roles', ['id'=> $role->id]);
+        $this->assertDatabaseMissing('roles', ['id' => $role->id]);
 
         $response
             ->assertStatus(200)
@@ -540,7 +538,7 @@ class RoleControllerTest extends TestCase
 
         Sanctum::actingAs(
             User::factory()->create()->givePermissionTo([
-                RolesPermissions::CAN_DELETE_ROLES
+                RolesPermissions::CAN_DELETE_ROLES,
             ]),
         );
 
@@ -548,13 +546,13 @@ class RoleControllerTest extends TestCase
             $randRoleId = rand(0, 999);
         } while (DB::table('roles')->where('id', $randRoleId)->exists());
 
-        $response = $this->deleteJson('/api/v1/roles/' . $randRoleId);
+        $response = $this->deleteJson('/api/v1/roles/'.$randRoleId);
 
         $this->assertDatabaseCount('roles', 3);
 
         $response
             ->assertStatus(404)
-            ->assertJsonFragment(['message' => 'No query results for model [App\\Models\\Role] ' . $randRoleId]);
+            ->assertJsonFragment(['message' => 'No query results for model [App\\Models\\Role] '.$randRoleId]);
     }
 
     /**
@@ -572,7 +570,7 @@ class RoleControllerTest extends TestCase
             ]),
         );
 
-        $response = $this->deleteJson('/api/v1/roles/' . $role->id);
+        $response = $this->deleteJson('/api/v1/roles/'.$role->id);
 
         $this->assertDatabaseCount('roles', 1);
 
@@ -592,7 +590,7 @@ class RoleControllerTest extends TestCase
             User::factory()->create(),
         );
 
-        $response = $this->deleteJson('/api/v1/roles/' . $role->id);
+        $response = $this->deleteJson('/api/v1/roles/'.$role->id);
 
         $this->assertDatabaseCount('roles', 1);
 

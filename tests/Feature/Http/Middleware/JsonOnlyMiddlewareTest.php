@@ -9,6 +9,7 @@ use Tests\TestCase;
 class JsonOnlyMiddlewareTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * Test that non-JSON requests are rejected.
      */
@@ -36,7 +37,7 @@ class JsonOnlyMiddlewareTest extends TestCase
 
         $response->assertStatus(400)
             ->assertJson([
-                'message' => 'Only JSON requests are accepted'
+                'message' => 'Only JSON requests are accepted',
             ]);
 
         $user->delete();
@@ -75,8 +76,8 @@ class JsonOnlyMiddlewareTest extends TestCase
                 'message' => 'The email field is required. (and 1 more error)',
                 'errors' => [
                     'email' => ['The email field is required.'],
-                    'password' => ['The password field is required.']
-                ]
+                    'password' => ['The password field is required.'],
+                ],
             ]);
 
     }

@@ -14,7 +14,6 @@ use Spatie\Permission\Middleware\PermissionMiddleware;
 
 class UserController extends Controller implements HasMiddleware
 {
-
     public static function middleware(): array
     {
         return [
@@ -65,8 +64,9 @@ class UserController extends Controller implements HasMiddleware
         $authUser = auth()->user();
 
         if (! $authUser->checkPermissionTo(UsersPermissions::CAN_LIST_USERS) && ! $authUser->is($user)) {
-            return new ApiErrorResponse("You can only view your own user.", status: Response::HTTP_FORBIDDEN);
+            return new ApiErrorResponse('You can only view your own user.', status: Response::HTTP_FORBIDDEN);
         }
+
         return new ApiSuccessResponse($user);
     }
 
@@ -85,7 +85,7 @@ class UserController extends Controller implements HasMiddleware
         $authUser = auth()->user();
 
         if ($authUser->checkPermissionTo(UsersPermissions::CAN_UPDATE_USERS_SELF) && ! $authUser->is($user)) {
-            return new ApiErrorResponse("You can only update your own user.", status: Response::HTTP_FORBIDDEN);
+            return new ApiErrorResponse('You can only update your own user.', status: Response::HTTP_FORBIDDEN);
         }
 
         $user->update($validated);
@@ -100,6 +100,6 @@ class UserController extends Controller implements HasMiddleware
     {
         $user->delete();
 
-        return new ApiSuccessResponse("User deleted successfully.");
+        return new ApiSuccessResponse('User deleted successfully.');
     }
 }

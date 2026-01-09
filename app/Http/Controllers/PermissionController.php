@@ -8,12 +8,8 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
-
     /**
      * Display a paginated list of permissions.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function index(Request $request): \Illuminate\Pagination\LengthAwarePaginator
     {
@@ -36,13 +32,13 @@ class PermissionController extends Controller
     }
 
     /**
-         * Display the specified resource.
-         *
-         * @param \Spatie\Permission\Models\Permission $permission The permission to be displayed
-         * @return \App\Http\Responses\ApiSuccessResponse The success response containing the permission
-         */
-        public function show(Permission $permission): ApiSuccessResponse
-        {
-            return new ApiSuccessResponse($permission);
-        }
+     * Display the specified resource.
+     *
+     * @param  \Spatie\Permission\Models\Permission  $permission  The permission to be displayed
+     * @return \App\Http\Responses\ApiSuccessResponse The success response containing the permission
+     */
+    public function show(Permission $permission): ApiSuccessResponse
+    {
+        return new ApiSuccessResponse($permission);
+    }
 }
