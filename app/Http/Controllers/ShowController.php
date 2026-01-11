@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Permissions\ShowsPermissions;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ShowController extends Controller
@@ -64,19 +66,16 @@ class ShowController extends Controller
     }
 
     /**
-     * ShowController constructor.
-     *
-     * This method initializes the ShowController class.
-     * It sets up the necessary middleware for specific actions.
+     * Return the middleware configurations for the controller.
+     * @return Middleware[]
      */
-    public function __construct()
+    public function middleware(): array
     {
-        $this->middleware('permission:' . ShowsPermissions::CAN_CREATE_SHOWS . '|' . ShowsPermissions::CAN_CREATE_SHOWS_OTHERS)
-            ->only(['store']);
-        $this->middleware('permission:' . ShowsPermissions::CAN_UPDATE_SHOWS . '|' . ShowsPermissions::CAN_UPDATE_SHOWS_OTHERS)
-            ->only(['update']);
-        $this->middleware('permission:' . ShowsPermissions::CAN_DELETE_SHOWS . '|' . ShowsPermissions::CAN_DELETE_SHOWS_OTHERS)
-            ->only(['delete']);
+        return [
+            new Middleware(PermissionMiddleware::using([ShowsPermissions::CAN_CREATE_SHOWS, ShowsPermissions::CAN_CREATE_SHOWS_OTHERS]), only: ['store']),
+            new Middleware(PermissionMiddleware::using([ShowsPermissions::CAN_UPDATE_SHOWS, ShowsPermissions::CAN_UPDATE_SHOWS_OTHERS]), only: ['update']),
+            new Middleware(PermissionMiddleware::using([ShowsPermissions::CAN_DELETE_SHOWS, ShowsPermissions::CAN_DELETE_SHOWS_OTHERS]), only: ['delete']),
+        ];
     }
 
     /**
