@@ -18,22 +18,61 @@ paths:
       parameters:
         - name: start_date
           in: query
-          description: Start date of the broadcast schedule.
+          description: >
+            Start of the time range ([ISO 8601](https://wikipedia.org/wiki/ISO_8601), UTC).
+            If omitted, defaults to the current time.
           schema:
             type: string
             format: date-time
         - name: end_date
           in: query
-          description: End date of the broadcast schedule.
+          description: >
+            End of the time range ([ISO 8601](https://wikipedia.org/wiki/ISO_8601), UTC).
+            Must not be used together with `days`.
           schema:
             type: string
             format: date-time
         - name: days
           in: query
-          description: Number of days for which to return the broadcast schedule.
+          description: >
+            Number of days to return starting from `start_date`
+            (or from now if `start_date` is omitted).
+            Must not be used together with `end_date`.
           schema:
+            minimum: 1
             maximum: 30
             type: integer
+        - name: live
+          in: query
+          description: Whether live or non-live shows should be shown. If not set both will be shown.
+          schema:
+            type: boolean
+        - name: moderator_ids
+          in: query
+          description: Filter for moderators on the shows by Ids
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: integer
+            uniqueItems: true
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum:
+            - id
+            - start_date
+            - end_date
+            default: start_date
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: asc
+            
       responses:
         "200":
           description: OK
@@ -44,10 +83,10 @@ paths:
                 items:
                   $ref: "#/components/schemas/Show"
         "500":
-          description:
-            "Internal Server Error - A generic error message, given when\
-            \ an unexpected condition was encountered and no more specific message\
-            \ is suitable."
+          description: >
+            Internal Server Error - A generic error message, given when
+            an unexpected condition was encountered and no more specific message
+            is suitable.
           content:
             application/json:
               schema:
@@ -1189,7 +1228,8 @@ components:
         - body
         - start_date
         - end_date
-        - moderators
+        - moderator
+        - co_moderators
         - is_live
         - enabled
         - locked_by
@@ -1211,23 +1251,14 @@ components:
         end_date:
           type: string
           format: date-time
-        moderators:
-          minItems: 1
+        moderator:
+          description: 'The primary moderator'
+          type: integer
+        co_moderators:
           type: array
+          uniqueItems: true
           items:
-            type: object
-            required:
-              - id
-              - name
-              - primary
-            properties:
-              id:
-                type: integer
-              name:
-                type: string
-                readOnly: true
-              primary:
-                type: boolean
+            type: integer
         is_live:
           type: boolean
         enabled:
