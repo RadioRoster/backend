@@ -24,7 +24,7 @@
     },
     "require-dev": {
         "fakerphp/faker": "1.24.1",
-        "laravel/pail": "1.2.4",
+        "laravel/pail": "1.2.7",
         "laravel/pint": "1.26.0",
         "laravel/sail": "1.51.0",
         "mockery/mockery": "1.6.12",
